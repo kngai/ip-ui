@@ -1,5 +1,7 @@
 # ip-ui
 
+UI for IP sprint.
+
 ## Project setup
 ```
 npm install
