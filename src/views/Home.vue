@@ -1,14 +1,18 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png">
+    <map-ip-ol></map-ip-ol>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
+import MapIpOl from '@/components/MapIpOl.vue'
 
 export default {
-  name: 'Home'
+  name: 'Home',
+  components: {
+    MapIpOl
+  }
 }
 </script>
