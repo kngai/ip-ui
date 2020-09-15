@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <vl-map class="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" data-projection="EPSG:4326" style="height: 400px;">
+  <div id="mapContainer">
+    <vl-map class="ipMap" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" data-projection="EPSG:4326">
       <vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation"></vl-view>
 
       <vl-geoloc @update:position="geolocPosition = $event">
@@ -18,7 +18,7 @@
         <vl-source-osm></vl-source-osm>
       </vl-layer-tile>
     </vl-map>
-    <div style="padding: 20px">
+    <div class="debug">
       Zoom: {{ zoom }}<br>
       Center: {{ center }}<br>
       Rotation: {{ rotation }}<br>
@@ -28,20 +28,32 @@
 </template>
 
 <script>
-  export default {
-    data () {
-      return {
-        zoom: 2,
-        center: [0, 0],
-        rotation: 0,
-        geolocPosition: undefined,
-      }
-    },
+import 'vuelayers/lib/style.css' // needs css-loader
+
+export default {
+  name: 'MapIpOl',
+  data () {
+    return {
+      zoom: 2,
+      center: [0, 0],
+      rotation: 0,
+      geolocPosition: undefined
+    }
+  },
+  methods: {
+    changeLang: function (event, lang) {
+      this.$i18n.locale = lang
+    }
   }
+}
 </script>
 
 <style scoped>
-.map {
-  height: 400px;
+#mapContainer {
+  height: 500px;
+  width: 100%;
+}
+.debug {
+  padding: 20px;
 }
 </style>
