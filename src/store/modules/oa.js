@@ -24,7 +24,7 @@ const getters = {
   },
   collectionIds: (state) => {
     if (Object.prototype.hasOwnProperty.call(state.collections, 'collections')) {
-      return state.allCollections.collections.map(collection => collection.id)
+      return state.collections.collections.map(collection => collection.id)
     } else {
       return []
     }
