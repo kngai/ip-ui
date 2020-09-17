@@ -49,17 +49,18 @@
         </vl-style>
       </vl-interaction-draw>
     </vl-map>
+
+    <h2>Debugging</h2>
+
     <v-row>
       <v-col>
         <v-card>
-          <v-card-title>Debugging</v-card-title>
+          <v-card-title>OL Map</v-card-title>
           <v-card-text>
             Zoom: {{ zoom }}<br>
             Center: {{ center }}<br>
             Rotation: {{ rotation }}<br>
-            My geolocation: {{ geolocPosition }}<br>
             Draw Features: {{ drawFeatures }}<br>
-            Draw Point: {{ drawPoint }}<br>
           </v-card-text>
         </v-card>
       </v-col>
@@ -118,7 +119,6 @@ export default {
       zoom: 4,
       center: [-92.93, 59.32],
       rotation: 0,
-      geolocPosition: undefined,
       drawFeatures: [],
       drawPoint: [],
       toggleDrawPoint: false,
