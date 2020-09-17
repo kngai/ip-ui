@@ -17,32 +17,108 @@
       <vl-layer-tile id="osm">
         <vl-source-osm></vl-source-osm>
       </vl-layer-tile>
+
+      <vl-layer-vector :z-index="1">
+        <vl-source-vector :features.sync="drawFeatures" ident="draw-source"></vl-source-vector>
+
+        <vl-style-box>
+          <vl-style-stroke color="green"></vl-style-stroke>
+          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+          <vl-style-circle :radius="5">
+            <vl-style-fill color="green"></vl-style-fill>
+            <vl-style-stroke color="dark-green"></vl-style-stroke>
+          </vl-style-circle>
+        </vl-style-box>
+      </vl-layer-vector>
+
+      <vl-layer-vector :z-index="2">
+        <vl-source-vector :features.sync="drawPoint" ident="draw-point"></vl-source-vector>
+
+        <vl-style-box>
+          <vl-style-stroke color="green"></vl-style-stroke>
+          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+          <vl-style-circle :radius="5">
+            <vl-style-fill color="green"></vl-style-fill>
+            <vl-style-stroke color="dark-green"></vl-style-stroke>
+          </vl-style-circle>
+        </vl-style-box>
+      </vl-layer-vector>
+
+      <vl-interaction-draw :type="drawType" source="draw-source" @drawstart="clearDrawFeatures" v-if="!toggleDrawPoint">
+        <vl-style-box>
+          <vl-style-stroke color="blue"></vl-style-stroke>
+          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+        </vl-style-box>
+      </vl-interaction-draw>
+
+      <vl-interaction-draw type="Point" source="draw-point" @change="clearDrawPoint" v-if="toggleDrawPoint">
+        <vl-style-box>
+          <vl-style-circle :radius="5">
+            <vl-style-fill color="white"></vl-style-fill>
+            <vl-style-stroke color="red"></vl-style-stroke>
+          </vl-style-circle>
+        </vl-style-box>
+      </vl-interaction-draw>
     </vl-map>
-    <div class="debug">
-      Zoom: {{ zoom }}<br>
-      Center: {{ center }}<br>
-      Rotation: {{ rotation }}<br>
-      My geolocation: {{ geolocPosition }}
-    </div>
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-card-title>Debugging</v-card-title>
+          <v-card-text>
+            Zoom: {{ zoom }}<br>
+            Center: {{ center }}<br>
+            Rotation: {{ rotation }}<br>
+            My geolocation: {{ geolocPosition }}<br>
+            Draw Features: {{ drawFeatures }}<br>
+            Draw Point: {{ drawPoint }}<br>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col>
+        <v-select
+          :items="drawTypes"
+          v-model="drawType"
+          label="Draw Type"
+          dense
+        ></v-select>
+        <v-switch
+          v-model="toggleDrawPoint"
+          :label="`Switch drawing mode: ${toggleDrawPoint}`"
+        ></v-switch>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
-import 'vuelayers/lib/style.css' // needs css-loader
+import 'vuelayers/dist/vuelayers.min.css' // needs css-loader
 
 export default {
   name: 'MapIpOl',
   data () {
     return {
-      zoom: 2,
-      center: [0, 0],
+      zoom: 4,
+      center: [-92.93, 59.32],
       rotation: 0,
-      geolocPosition: undefined
+      geolocPosition: undefined,
+      drawFeatures: [],
+      drawPoint: [],
+      toggleDrawPoint: false,
+      drawType: 'Polygon',
+      drawTypes: ['Polygon', 'LineString', 'Point']
     }
   },
   methods: {
     changeLang: function (event, lang) {
       this.$i18n.locale = lang
+    },
+    clearDrawFeatures: function () {
+      this.drawFeatures = []
+    },
+    clearDrawPoint: function () {
+      if (this.drawPoint.length > 1) {
+        this.drawPoint.shift()
+      }
     }
   }
 }
@@ -52,8 +128,5 @@ export default {
 #mapContainer {
   height: 500px;
   width: 100%;
-}
-.debug {
-  padding: 20px;
 }
 </style>
