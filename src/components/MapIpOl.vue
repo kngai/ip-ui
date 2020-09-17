@@ -7,6 +7,10 @@
         <vl-source-osm></vl-source-osm>
       </vl-layer-tile>
 
+      <vl-layer-image v-for="(layerOn, layerName) in geometWmsLayers" :key="layerName" :visible="layerOn">
+        <vl-source-image-wms url="https://geo.weather.gc.ca/geomet" format="image/png" :layers="layerName" transition="0"></vl-source-image-wms>
+      </vl-layer-image>
+
       <vl-layer-vector :z-index="1">
         <vl-source-vector :features.sync="drawFeatures" ident="draw-source"></vl-source-vector>
 
@@ -20,32 +24,10 @@
         </vl-style>
       </vl-layer-vector>
 
-      <vl-layer-vector :z-index="2">
-        <vl-source-vector :features.sync="drawPoint" ident="draw-point"></vl-source-vector>
-
-        <vl-style>
-          <vl-style-stroke color="green"></vl-style-stroke>
-          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
-          <vl-style-circle :radius="5">
-            <vl-style-fill color="green"></vl-style-fill>
-            <vl-style-stroke color="dark-green"></vl-style-stroke>
-          </vl-style-circle>
-        </vl-style>
-      </vl-layer-vector>
-
-      <vl-interaction-draw :type="drawType" source="draw-source" @drawstart="clearDrawFeatures" v-if="!toggleDrawPoint">
+      <vl-interaction-draw :type="drawType" source="draw-source" @drawstart="clearDrawFeatures" v-if="drawOn">
         <vl-style>
           <vl-style-stroke color="blue"></vl-style-stroke>
           <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
-        </vl-style>
-      </vl-interaction-draw>
-
-      <vl-interaction-draw type="Point" source="draw-point" @change="clearDrawPoint" v-if="toggleDrawPoint">
-        <vl-style>
-          <vl-style-circle :radius="5">
-            <vl-style-fill color="white"></vl-style-fill>
-            <vl-style-stroke color="red"></vl-style-stroke>
-          </vl-style-circle>
         </vl-style>
       </vl-interaction-draw>
     </vl-map>
@@ -68,17 +50,27 @@
         <v-card>
           <v-card-title>Draw Options</v-card-title>
           <v-card-text>
+            <v-switch
+              v-model="drawOn"
+              :label="`Draw on: ${drawOn}`">
+            </v-switch>
             <v-select
+              :disabled="!drawOn"
               :items="drawTypes"
               v-model="drawType"
               label="Draw Type"
               dense
             ></v-select>
+          </v-card-text>
+        </v-card>
+        <v-card class="mt-4">
+          <v-card-title>GeoMet WMS Layers</v-card-title>
+          <v-card-text>
             <v-switch
-              disabled
-              v-model="toggleDrawPoint"
-              :label="`Switch drawing mode: ${toggleDrawPoint}`"
-            ></v-switch>
+              v-for="(layerOn, layerName) in geometWmsLayers" :key="layerName"
+              v-model="geometWmsLayers[layerName]"
+              :label="`${layerName}: ${layerOn}`">
+            </v-switch>
           </v-card-text>
         </v-card>
       </v-col>
@@ -116,14 +108,17 @@ export default {
   name: 'MapIpOl',
   data () {
     return {
-      zoom: 4,
+      zoom: 5,
       center: [-92.93, 59.32],
       rotation: 0,
       drawFeatures: [],
-      drawPoint: [],
-      toggleDrawPoint: false,
+      drawOn: false,
       drawType: 'Polygon',
-      drawTypes: ['Polygon', 'LineString', 'Point']
+      drawTypes: ['Polygon', 'LineString', 'Point'],
+      geometWmsLayers: {
+        'RADAR_1KM_RRAI': true,
+        'RADAR_COVERAGE_RRAI.INV': true
+      }
     }
   },
   computed: {
