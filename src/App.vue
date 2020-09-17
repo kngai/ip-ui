@@ -47,7 +47,7 @@
       <v-app-bar-nav-icon @click.stop="drawerLeft = !drawerLeft" />
       <v-toolbar-title>
         {{ $t('common.appName') }} <v-chip color="success">{{ $i18n.locale }}</v-chip>
-        ({{version}} - {{ build_date }})
+        ({{ version }} - {{ build_date }})
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon @click.stop="drawerRight = !drawerRight">
