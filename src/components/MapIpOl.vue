@@ -7,9 +7,9 @@
         <template slot-scope="geoloc">
           <vl-feature v-if="geoloc.position" id="position-feature">
             <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
-            <vl-style-box>
+            <vl-style>
               <vl-style-icon src="_media/marker.png" :scale="0.4" :anchor="[0.5, 1]"></vl-style-icon>
-            </vl-style-box>
+            </vl-style>
           </vl-feature>
         </template>
       </vl-geoloc>
@@ -21,43 +21,43 @@
       <vl-layer-vector :z-index="1">
         <vl-source-vector :features.sync="drawFeatures" ident="draw-source"></vl-source-vector>
 
-        <vl-style-box>
+        <vl-style>
           <vl-style-stroke color="green"></vl-style-stroke>
           <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
           <vl-style-circle :radius="5">
             <vl-style-fill color="green"></vl-style-fill>
             <vl-style-stroke color="dark-green"></vl-style-stroke>
           </vl-style-circle>
-        </vl-style-box>
+        </vl-style>
       </vl-layer-vector>
 
       <vl-layer-vector :z-index="2">
         <vl-source-vector :features.sync="drawPoint" ident="draw-point"></vl-source-vector>
 
-        <vl-style-box>
+        <vl-style>
           <vl-style-stroke color="green"></vl-style-stroke>
           <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
           <vl-style-circle :radius="5">
             <vl-style-fill color="green"></vl-style-fill>
             <vl-style-stroke color="dark-green"></vl-style-stroke>
           </vl-style-circle>
-        </vl-style-box>
+        </vl-style>
       </vl-layer-vector>
 
       <vl-interaction-draw :type="drawType" source="draw-source" @drawstart="clearDrawFeatures" v-if="!toggleDrawPoint">
-        <vl-style-box>
+        <vl-style>
           <vl-style-stroke color="blue"></vl-style-stroke>
           <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
-        </vl-style-box>
+        </vl-style>
       </vl-interaction-draw>
 
       <vl-interaction-draw type="Point" source="draw-point" @change="clearDrawPoint" v-if="toggleDrawPoint">
-        <vl-style-box>
+        <vl-style>
           <vl-style-circle :radius="5">
             <vl-style-fill color="white"></vl-style-fill>
             <vl-style-stroke color="red"></vl-style-stroke>
           </vl-style-circle>
-        </vl-style-box>
+        </vl-style>
       </vl-interaction-draw>
     </vl-map>
     <v-row>
@@ -75,16 +75,22 @@
         </v-card>
       </v-col>
       <v-col>
-        <v-select
-          :items="drawTypes"
-          v-model="drawType"
-          label="Draw Type"
-          dense
-        ></v-select>
-        <v-switch
-          v-model="toggleDrawPoint"
-          :label="`Switch drawing mode: ${toggleDrawPoint}`"
-        ></v-switch>
+        <v-card>
+          <v-card-title>Draw Options</v-card-title>
+          <v-card-text>
+            <v-select
+              :items="drawTypes"
+              v-model="drawType"
+              label="Draw Type"
+              dense
+            ></v-select>
+            <v-switch
+              disabled
+              v-model="toggleDrawPoint"
+              :label="`Switch drawing mode: ${toggleDrawPoint}`"
+            ></v-switch>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
   </div>
