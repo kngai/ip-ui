@@ -1,5 +1,5 @@
 // import the api endpoints
-import { getCollection, getAllCollections } from "@/api/oa.api";
+import { getCollection, getAllCollections, getConformance } from "@/api/oa.api";
 
 // initial state
 const state = () => ({
@@ -16,6 +16,9 @@ const getters = {
   allCollections: (state) => {
     return state.collections
   },
+  collectionById: (state) => (id) => {
+    return state.collection[id]
+  },
   conformance: (state) => {
     return state.conformance
   }
@@ -28,6 +31,9 @@ const mutations = {
   },
   setAllCollections(state, { json }) {
     state.collections = json
+  },
+  setConformance(state, { json }) {
+    state.conformance = json
   }
 }
 
@@ -53,22 +59,17 @@ const actions = {
     } catch (error) {
       console.error(error)
     }
+  },
+  async fetchConformance({ commit }) {
+    try {
+      const response = await getConformance()
+      commit('setConformance', {
+        json: response
+      })
+    } catch (error) {
+      console.error(error)
+    }
   }
-  // getJsonld({commit, state}) {
-  //   if (state.jsonldLoaded) {
-  //     return false // no need to reload if exists
-  //   }
-  //   axios.get(PYGEOAPI_HOST + '?f=jsonld')
-  //     .then((res) => {
-  //       commit('setJsonld', { jsonld: res.data })
-  //       commit('setLoadedJsonld', true)
-  //     })
-  //     .catch((error) => {
-  //       console.error(error)
-  //       commit('setJsonld', { jsonld: {} })
-  //       commit('setLoadedJsonld', false)
-  //     })
-  // }
 }
 
 export default {

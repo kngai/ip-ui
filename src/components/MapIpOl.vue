@@ -92,15 +92,27 @@
           </v-card-text>
         </v-card>
       </v-col>
+      <v-col>
+        <v-card>
+          <v-card-title>OA Testing</v-card-title>
+          <v-card-text>
+            <code>{{ allCollections }}</code>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
 import 'vuelayers/dist/vuelayers.min.css' // needs css-loader
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'MapIpOl',
+  created() {
+    this.$store.dispatch('oa/fetchAllCollections')
+  },
   data () {
     return {
       zoom: 4,
@@ -113,6 +125,11 @@ export default {
       drawType: 'Polygon',
       drawTypes: ['Polygon', 'LineString', 'Point']
     }
+  },
+  computed: {
+    ...mapGetters('oa', [
+      'allCollections'
+    ])
   },
   methods: {
     changeLang: function (event, lang) {
