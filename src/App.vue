@@ -40,19 +40,28 @@
       </v-list>
     </v-navigation-drawer>
 
+    <v-navigation-drawer
+      id="elements-drawer"
+      v-model="drawerRight"
+      hide-overlay
+      app
+      right
+      clipped
+      width="500px">
+      <p>Right drawer here</p>
+    </v-navigation-drawer>
+
     <v-app-bar
       app
       clipped-left
       clipped-right>
-      <v-app-bar-nav-icon @click.stop="drawerLeft = !drawerLeft" />
+      <v-app-bar-nav-icon @click.stop="drawerLeft = !drawerLeft"></v-app-bar-nav-icon>
       <v-toolbar-title>
         {{ $t('common.appName') }} <v-chip color="success">{{ $i18n.locale }}</v-chip>
         ({{ version }} - {{ build_date }})
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon @click.stop="drawerRight = !drawerRight">
-        <v-icon>mdi-chart-areaspline</v-icon>
-      </v-btn>
+      <v-app-bar-nav-icon @click.stop="drawerRight = !drawerRight"></v-app-bar-nav-icon>
     </v-app-bar>
 
     <!-- START OF temporary drawers -->
