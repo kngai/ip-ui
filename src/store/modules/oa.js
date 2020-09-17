@@ -30,7 +30,11 @@ const getters = {
     }
   },
   conformsTo: (state) => {
-    return state.conformance.conformsTo
+    if (Object.prototype.hasOwnProperty.call(state.conformance, 'conformsTo')) {
+      return state.conformance.conformsTo
+    } else {
+      return []
+    }
   }
 }
 

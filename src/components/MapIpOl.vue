@@ -87,6 +87,9 @@
           <v-card-text>
             <code>{{ collectionIds }}</code>
           </v-card-text>
+          <v-card-actions>
+            <v-btn text @click="loadAllCollections" color="primary">Fetch</v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
       <v-col>
@@ -95,6 +98,9 @@
           <v-card-text>
             <code>{{ conformsTo }}</code>
           </v-card-text>
+          <v-card-actions>
+            <v-btn text @click="loadConformance" color="primary">Fetch</v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -107,12 +113,6 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'MapIpOl',
-  async mounted() {
-    if (this.collectionIds.length === 0) {
-      await this.fetchConformance()
-      await this.fetchAllCollections()
-    }
-  },
   data () {
     return {
       zoom: 4,
@@ -146,6 +146,16 @@ export default {
     clearDrawPoint: function () {
       if (this.drawPoint.length > 1) {
         this.drawPoint.shift()
+      }
+    },
+    loadConformance: async function () {
+      if (this.conformsTo.length === 0) {
+        await this.fetchConformance()
+      }
+    },
+    loadAllCollections: async function () {
+      if (this.collectionIds.length === 0) {
+        await this.fetchAllCollections()
       }
     }
   }
