@@ -21,6 +21,16 @@ const getters = {
   },
   conformance: (state) => {
     return state.conformance
+  },
+  collectionIds: (state) => {
+    if (Object.prototype.hasOwnProperty.call(state.collections, 'collections')) {
+      return state.allCollections.collections.map(collection => collection.id)
+    } else {
+      return []
+    }
+  },
+  conformsTo: (state) => {
+    return state.conformance.conformsTo
   }
 }
 
@@ -44,7 +54,7 @@ const actions = {
       const response = await getCollection(collectionId)
       commit('setCollection', {
         collectionId: collectionId,
-        json: response
+        json: response.data
       })
     } catch (error) {
       console.error(error)
@@ -54,7 +64,7 @@ const actions = {
     try {
       const response = await getAllCollections()
       commit('setAllCollections', {
-        json: response
+        json: response.data
       })
     } catch (error) {
       console.error(error)
@@ -64,7 +74,7 @@ const actions = {
     try {
       const response = await getConformance()
       commit('setConformance', {
-        json: response
+        json: response.data
       })
     } catch (error) {
       console.error(error)

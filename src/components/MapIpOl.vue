@@ -94,9 +94,17 @@
       </v-col>
       <v-col>
         <v-card>
-          <v-card-title>OA Testing</v-card-title>
+          <v-card-title>OGC API - Collections</v-card-title>
           <v-card-text>
-            <code>{{ allCollections }}</code>
+            <code>{{ collectionIds }}</code>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col>
+        <v-card>
+          <v-card-title>OGC API - Conformance</v-card-title>
+          <v-card-text>
+            <code>{{ conformsTo }}</code>
           </v-card-text>
         </v-card>
       </v-col>
@@ -106,12 +114,15 @@
 
 <script>
 import 'vuelayers/dist/vuelayers.min.css' // needs css-loader
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'MapIpOl',
-  created() {
-    this.$store.dispatch('oa/fetchAllCollections')
+  async mounted() {
+    if (this.collectionIds.length === 0) {
+      await this.fetchConformance()
+      await this.fetchAllCollections()
+    }
   },
   data () {
     return {
@@ -128,10 +139,15 @@ export default {
   },
   computed: {
     ...mapGetters('oa', [
-      'allCollections'
+      'collectionIds',
+      'conformsTo'
     ])
   },
   methods: {
+    ...mapActions('oa', [
+      'fetchAllCollections',
+      'fetchConformance'
+    ]),
     changeLang: function (event, lang) {
       this.$i18n.locale = lang
     },
