@@ -94,7 +94,7 @@
         <v-card class="mt-4">
           <v-card-title>OGC API - Processes</v-card-title>
           <v-card-text>
-            <code>{{  }}</code>
+            <code>{{ processes }}</code>
           </v-card-text>
           <v-card-actions>
             <v-btn text @click="loadProcesses" color="primary">Fetch</v-btn>
@@ -163,7 +163,7 @@
 <script>
 import GeoJSON from 'ol/format/GeoJSON'
 import 'vuelayers/dist/vuelayers.min.css' // needs css-loader
-import { mapGetters, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'MapIpOl',
@@ -212,6 +212,9 @@ export default {
     ...mapGetters('oaGeomet', {
       geometCollectionItemsById: 'collectionItemsById'
     }),
+    ...mapState('oaproc', [
+      'processes'
+    ]),
     numClimateStations: function () {
       return this.geometPointData['climate-stations'].data.features.length
     },
