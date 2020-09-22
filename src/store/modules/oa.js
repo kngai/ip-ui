@@ -1,9 +1,10 @@
 // import the api endpoints
-import { getCollection, getAllCollections, getConformance } from "@/api/oa.api";
+import { getCollection, getAllCollections, getConformance, getCollectionItems } from "@/api/oa.api";
 
 // initial state
 const state = () => ({
   collection: {},
+  collectionItems: {},
   collections: {},
   conformance: {}
 })
@@ -18,6 +19,9 @@ const getters = {
   },
   collectionById: (state) => (id) => {
     return state.collection[id]
+  },
+  collectionItemsById: (state) => (id) => {
+    return state.collectionItems[id]
   },
   conformance: (state) => {
     return state.conformance
@@ -43,6 +47,9 @@ const mutations = {
   setCollection(state, { collectionId, json }) {
     state.collection[collectionId] = json
   },
+  setCollectionItems(state, { collectionId, json }) {
+    state.collectionItems[collectionId] = json
+  },
   setAllCollections(state, { json }) {
     state.collections = json
   },
@@ -57,6 +64,17 @@ const actions = {
     try {
       const response = await getCollection(collectionId)
       commit('setCollection', {
+        collectionId: collectionId,
+        json: response.data
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  },
+  async fetchCollectionItems({ commit }, { collectionId }) {
+    try {
+      const response = await getCollectionItems(collectionId)
+      commit('setCollectionItems', {
         collectionId: collectionId,
         json: response.data
       })

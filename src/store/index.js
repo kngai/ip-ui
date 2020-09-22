@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import oa from './modules/oa'
+import oaproc from './modules/oaproc'
 import oaGeomet from './modules/oaGeomet'
 
 Vue.use(Vuex)
@@ -12,6 +13,7 @@ export default new Vuex.Store({
   strict: debug,
   modules: {
     oa,
+    oaproc,
     oaGeomet
   }
 })
