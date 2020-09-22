@@ -1,4 +1,4 @@
-import oaClient from './oaClient';
+import oaClient from './oaGeometClient';
 
 const END_POINT_COLLECTION = '/collections';
 const END_POINT_CONFORMANCE = '/conformance';
