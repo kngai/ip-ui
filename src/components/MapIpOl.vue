@@ -253,22 +253,26 @@ export default {
         await this.fetchAllCollections()
       }
     },
-    loadClimateStations: async function () {
-      this.climateStations.loading = true
-      await this.fetchGeometCollectionItems({
-        collectionId: 'climate-stations'
-      })
-      this.climateStations.data = this.geometCollectionItemsById(this.climateStations.collectionId)
-      this.climateStations.loading = false
+    loadClimateStations: async function (toggleVal) {
+      if (toggleVal) {
+        this.climateStations.loading = true
+        await this.fetchGeometCollectionItems({
+          collectionId: 'climate-stations'
+        })
+        this.climateStations.data = this.geometCollectionItemsById(this.climateStations.collectionId)
+        this.climateStations.loading = false
+      }
     },
-    loadDmsSwobStations: async function () {
-      this.swobStations.loading = true
-      // dms-swob
-      await this.fetchCollectionItems({
-        collectionId: this.swobStations.collectionId
-      })
-      this.swobStations.data = this.collectionItemsById(this.swobStations.collectionId)
-      this.swobStations.loading = false
+    loadDmsSwobStations: async function (toggleVal) {
+      if (toggleVal) {
+        this.swobStations.loading = true
+        // dms-swob
+        await this.fetchCollectionItems({
+          collectionId: this.swobStations.collectionId
+        })
+        this.swobStations.data = this.collectionItemsById(this.swobStations.collectionId)
+        this.swobStations.loading = false
+      }
     },
     loadProcesses: async function() {
       await this.fetchProcesses()
