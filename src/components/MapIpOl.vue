@@ -140,10 +140,12 @@
               label="MSC Climate stations">
             </v-switch>
             <v-switch
-              v-model="pointData['dms-swob'].on"
-              @change="loadCollectionPoints($event, 'dms-swob')"
-              :loading="pointData['dms-swob'].loading"
-              label="DMS SWOB stations">
+              v-for="collectionId in collectionIds"
+              :key="collectionId"
+              v-model="pointData[collectionId].on"
+              @change="loadCollectionPoints($event, collectionId)"
+              :loading="pointData[collectionId].loading"
+              :label="collectionId">
             </v-switch>
           </v-card-text>
         </v-card>
@@ -165,6 +167,9 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'MapIpOl',
+  async mounted () {
+    await this.loadAllCollections()
+  },
   data () {
     return {
       zoom: 5,
@@ -252,6 +257,15 @@ export default {
     loadAllCollections: async function () {
       if (this.collectionIds.length === 0) {
         await this.fetchAllCollections()
+        this.collectionIds.forEach((collectionId) => {
+          this.pointData[collectionId] = {
+            loading: false,
+            data: {
+              features: []
+            },
+            on: false
+          }
+        })
       }
     },
     loadCollectionPoints: async function(toggleVal, collectionId) {
