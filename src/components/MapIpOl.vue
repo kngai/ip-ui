@@ -38,6 +38,20 @@
         </vl-style>
       </vl-layer-vector>
 
+      <vl-layer-vector :z-index="2" :visible="swobStations.on">
+        <vl-source-vector :features="featuresSwobStations" ident="dms-swob-stations"></vl-source-vector>
+
+        <vl-style>
+          <vl-style-stroke color="purple"></vl-style-stroke>
+          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+          <vl-style-circle :radius="5">
+            <vl-style-fill color="purple"></vl-style-fill>
+            <vl-style-stroke color="indigo"></vl-style-stroke>
+          </vl-style-circle>
+          <!-- <vl-style-text :text="'Hola'"></vl-style-text> -->
+        </vl-style>
+      </vl-layer-vector>
+
       <vl-interaction-draw :type="drawType" source="draw-source" @drawstart="clearDrawFeatures" v-if="drawOn">
         <vl-style>
           <vl-style-stroke color="blue"></vl-style-stroke>
@@ -203,6 +217,9 @@ export default {
     },
     featuresClimateStations: function () {
       return this.climateStations.data.features
+    },
+    featuresSwobStations: function () {
+      return this.swobStations.data.features
     }
   },
   methods: {

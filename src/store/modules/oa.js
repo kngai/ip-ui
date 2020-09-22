@@ -80,6 +80,12 @@ const actions = {
       })
     } catch (error) {
       console.error(error)
+      commit('setCollectionItems', {
+        collectionId: collectionId,
+        json: {
+          features: []
+        }
+      })
     }
   },
   async fetchAllCollections({ commit }) {
