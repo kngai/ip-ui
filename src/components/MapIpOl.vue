@@ -46,7 +46,7 @@
           <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
           <vl-style-circle :radius="5">
             <vl-style-fill color="purple"></vl-style-fill>
-            <vl-style-stroke color="indigo"></vl-style-stroke>
+            <vl-style-stroke color="orange"></vl-style-stroke>
           </vl-style-circle>
           <!-- <vl-style-text :text="'Hola'"></vl-style-text> -->
         </vl-style>
