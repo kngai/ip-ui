@@ -24,7 +24,7 @@
         </vl-style>
       </vl-layer-vector>
 
-      <vl-layer-vector :z-index="2" :visible="geometPointData['climate-stations'].on">
+      <!-- <vl-layer-vector :z-index="2" :visible="geometPointData['climate-stations'].on">
         <vl-source-vector :features="featuresClimateStations" ident="climate-stations"></vl-source-vector>
 
         <vl-style>
@@ -34,9 +34,8 @@
             <vl-style-fill color="orange"></vl-style-fill>
             <vl-style-stroke color="brown"></vl-style-stroke>
           </vl-style-circle>
-          <!-- <vl-style-text :text="'Hola'"></vl-style-text> -->
         </vl-style>
-      </vl-layer-vector>
+      </vl-layer-vector> -->
 
       <vl-layer-vector :z-index="3" :visible="pointData['dms-swob'].on">
         <vl-source-vector :features="featuresSwobStations" ident="dms-swob-stations"></vl-source-vector>
@@ -48,7 +47,6 @@
             <vl-style-fill color="purple"></vl-style-fill>
             <vl-style-stroke color="orange"></vl-style-stroke>
           </vl-style-circle>
-          <!-- <vl-style-text :text="'Hola'"></vl-style-text> -->
         </vl-style>
       </vl-layer-vector>
 
