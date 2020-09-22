@@ -24,7 +24,7 @@
         </vl-style>
       </vl-layer-vector>
 
-      <vl-layer-vector :z-index="2" :visible="climateStations.on">
+      <vl-layer-vector :z-index="2" :visible="geometPointData['climate-stations'].on">
         <vl-source-vector :features="featuresClimateStations" ident="climate-stations"></vl-source-vector>
 
         <vl-style>
@@ -38,7 +38,7 @@
         </vl-style>
       </vl-layer-vector>
 
-      <vl-layer-vector :z-index="2" :visible="swobStations.on">
+      <vl-layer-vector :z-index="3" :visible="pointData['dms-swob'].on">
         <vl-source-vector :features="featuresSwobStations" ident="dms-swob-stations"></vl-source-vector>
 
         <vl-style>
@@ -136,15 +136,15 @@
           <v-card-title>GeoJSON layers</v-card-title>
           <v-card-text>
             <v-switch
-              v-model="climateStations.on"
-              @change="loadClimateStations"
-              :loading="climateStations.loading"
+              v-model="geometPointData['climate-stations'].on"
+              @change="loadGeometCollectionPoints($event, 'climate-stations')"
+              :loading="geometPointData['climate-stations'].loading"
               label="MSC Climate stations">
             </v-switch>
             <v-switch
-              v-model="swobStations.on"
-              @change="loadDmsSwobStations"
-              :loading="swobStations.loading"
+              v-model="pointData['dms-swob'].on"
+              @change="loadCollectionPoints($event, 'dms-swob')"
+              :loading="pointData['dms-swob'].loading"
               label="DMS SWOB stations">
             </v-switch>
           </v-card-text>
@@ -177,25 +177,29 @@ export default {
       drawType: 'Polygon',
       drawTypes: ['Polygon', 'LineString', 'Point'],
       geometWmsLayers: {
-        'RADAR_1KM_RRAI': true,
-        'RADAR_COVERAGE_RRAI.INV': true
+        'RADAR_1KM_RRAI': false,
+        'RADAR_COVERAGE_RRAI.INV': false
       },
       geoJSONClimate: new GeoJSON(),
-      climateStations: {
-        collectionId: 'climate-stations',
-        loading: false,
-        data: {
-          features: []
-        },
-        on: false
+      pointData: {
+        'dms-swob': {
+          collectionId: 'dms-swob',
+          loading: false,
+          data: {
+            features: []
+          },
+          on: false
+        }
       },
-      swobStations: {
-        collectionId: 'dms-swob',
-        loading: false,
-        data: {
-          features: []
-        },
-        on: false
+      geometPointData: {
+        'climate-stations': {
+          collectionId: 'climate-stations',
+          loading: false,
+          data: {
+            features: []
+          },
+          on: false
+        }
       }
     }
   },
@@ -209,17 +213,13 @@ export default {
       geometCollectionItemsById: 'collectionItemsById'
     }),
     numClimateStations: function () {
-      if (Object.prototype.hasOwnProperty.call(this.climateStations.data, 'features')) {
-        return this.climateStations.data.features.length
-      } else {
-        return 0
-      }
+      return this.geometPointData['climate-stations'].data.features.length
     },
     featuresClimateStations: function () {
-      return this.climateStations.data.features
+      return this.geometPointData['climate-stations'].data.features || []
     },
     featuresSwobStations: function () {
-      return this.swobStations.data.features
+      return this.pointData['dms-swob'].data.features || []
     }
   },
   methods: {
@@ -253,25 +253,24 @@ export default {
         await this.fetchAllCollections()
       }
     },
-    loadClimateStations: async function (toggleVal) {
+    loadCollectionPoints: async function(toggleVal, collectionId) {
       if (toggleVal) {
-        this.climateStations.loading = true
-        await this.fetchGeometCollectionItems({
-          collectionId: 'climate-stations'
+        this.pointData[collectionId].loading = true
+        await this.fetchCollectionItems({
+          collectionId: collectionId
         })
-        this.climateStations.data = this.geometCollectionItemsById(this.climateStations.collectionId)
-        this.climateStations.loading = false
+        this.pointData[collectionId].data = this.collectionItemsById(collectionId)
+        this.pointData[collectionId].loading = false
       }
     },
-    loadDmsSwobStations: async function (toggleVal) {
+    loadGeometCollectionPoints: async function(toggleVal, collectionId) {
       if (toggleVal) {
-        this.swobStations.loading = true
-        // dms-swob
-        await this.fetchCollectionItems({
-          collectionId: this.swobStations.collectionId
+        this.geometPointData[collectionId].loading = true
+        await this.fetchGeometCollectionItems({
+          collectionId: collectionId
         })
-        this.swobStations.data = this.collectionItemsById(this.swobStations.collectionId)
-        this.swobStations.loading = false
+        this.geometPointData[collectionId].data = this.geometCollectionItemsById(collectionId)
+        this.geometPointData[collectionId].loading = false
       }
     },
     loadProcesses: async function() {
@@ -312,7 +311,7 @@ export default {
           }
         }]
       })
-    }
+    },
     // styleFactoryClimateStation: function() { // custom styling with text
     //   return feature => {
     //     return [new olStyle({
