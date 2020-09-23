@@ -37,8 +37,8 @@
         </vl-style>
       </vl-layer-vector>
 
-      <vl-layer-vector :z-index="2" v-for="(collection, collectionId) in pointData" :key="collectionId" :visible="collection.on">
-        <vl-source-vector :features.sync="collection.data.features" :ident="'source-' + collectionId"></vl-source-vector>
+      <vl-layer-vector :z-index="3" v-for="(collection, collectionId) in pointData" :key="collectionId" :visible="collection.on">
+        <vl-source-vector :features.sync="collection.data.features"></vl-source-vector>
 
         <vl-style>
           <vl-style-stroke color="brown"></vl-style-stroke>
@@ -134,11 +134,11 @@
           <v-card-title>GeoJSON layers</v-card-title>
           <v-card-text>
             <v-switch
-              v-for="collectionId in collectionIds"
+              v-for="(collection, collectionId) in pointData"
               :key="collectionId"
-              v-model="pointData[collectionId].on"
+              v-model="collection.on"
               @change="loadCollectionPoints($event, collectionId)"
-              :loading="pointData[collectionId].loading"
+              :loading="collection.loading"
               :label="collectionId">
             </v-switch>
             <v-switch
@@ -173,7 +173,7 @@ export default {
   data () {
     return {
       zoom: 5,
-      center: [-92.93, 59.32],
+      center: [-92, 48],
       rotation: 0,
       drawFeatures: [],
       drawOn: false,
@@ -244,7 +244,7 @@ export default {
     loadAllCollections: async function () {
       if (this.collectionIds.length === 0) {
         await this.fetchAllCollections()
-        await this.collectionIds.forEach((collectionId) => {
+        this.collectionIds.forEach((collectionId) => {
           this.pointData[collectionId] = {
             loading: false,
             data: {
@@ -253,7 +253,6 @@ export default {
             on: false
           }
         })
-        console.log(this.pointData)
       }
     },
     loadCollectionPoints: async function(toggleVal, collectionId) {

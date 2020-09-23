@@ -73,7 +73,7 @@ const actions = {
   },
   async fetchCollectionItems({ commit }, { collectionId }) {
     try {
-      const response = await getCollectionItems(collectionId, {limit: 1})
+      const response = await getCollectionItems(collectionId, {limit: 500})
       commit('setCollectionItems', {
         collectionId: collectionId,
         json: response.data
