@@ -36,7 +36,7 @@ const actions = {
   },
   async fetchProcesses({ commit }) {
     try {
-      const response = await getProcesses()
+      const response = await getProcesses({f: 'json'})
       commit('setProcesses', {
         json: response.data
       })

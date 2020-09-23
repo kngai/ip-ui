@@ -62,7 +62,7 @@ const mutations = {
 const actions = {
   async fetchCollection({ commit }, { collectionId }) {
     try {
-      const response = await getCollection(collectionId)
+      const response = await getCollection(collectionId, {f: 'json'})
       commit('setCollection', {
         collectionId: collectionId,
         json: response.data
@@ -73,7 +73,7 @@ const actions = {
   },
   async fetchAllCollections({ commit }) {
     try {
-      const response = await getAllCollections()
+      const response = await getAllCollections({f: 'json'})
       commit('setAllCollections', {
         json: response.data
       })
@@ -83,7 +83,7 @@ const actions = {
   },
   async fetchCollectionItems({ commit }, { collectionId }) {
     try {
-      const response = await getCollectionItems(collectionId, {limit: 500})
+      const response = await getCollectionItems(collectionId, {limit: 500, f: 'json'})
       commit('setCollectionItems', {
         collectionId: collectionId,
         json: response.data
@@ -100,7 +100,7 @@ const actions = {
   },
   async fetchConformance({ commit }) {
     try {
-      const response = await getConformance()
+      const response = await getConformance({f: 'json'})
       commit('setConformance', {
         json: response.data
       })

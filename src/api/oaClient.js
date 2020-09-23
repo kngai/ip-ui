@@ -5,9 +5,6 @@ const oaClient = axios.create({
   timeout: 9000,
   headers: {
     'content-Type': 'application/json'
-  },
-  params: {
-    f: 'json'
   }
 });
 
