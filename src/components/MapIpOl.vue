@@ -201,15 +201,15 @@
             <v-btn text @click="loadAllCollections" color="primary">Fetch</v-btn>
           </v-card-actions>
         </v-card>
-        <v-card class="mt-4">
+        <v-card class="mt-4" :loading="stationsNearestPoint.loading">
           <v-card-title>Nearest stations from point</v-card-title>
           <v-card-text>
             <v-switch
               v-model="stationsNearestPoint.on"
               :label="'Draw nearest point'">
             </v-switch>
-            Lat: {{ coordNearestPoint[1] }}<br>
-            Lon: {{ coordNearestPoint[0] }}<br>
+            Lat: {{ coordNearestPoint[1].toFixed(4) }}<br>
+            Lon: {{ coordNearestPoint[0].toFixed(4) }}<br>
             <v-text-field label="Distance" v-model="nearestDistance"></v-text-field>
             <v-select v-model="boxedCollectionId" :items="boxedCollectionIds" label="Collection"></v-select>
             Feature IDs: <code>{{ stationsNearestPoint.data.features.map(feature => feature.id) }}</code>
@@ -326,7 +326,7 @@ export default {
         },
         on: false
       },
-      nearestDistance: '10km'
+      nearestDistance: '100km'
     }
   },
   computed: {
@@ -360,7 +360,7 @@ export default {
     },
     coordNearestPoint: function () {
       if (this.drawNearestPoint.length === 0 ) {
-        return [null, null]
+        return [0, 0]
       } else {
         return this.drawNearestPoint[0].geometry.coordinates
       }
@@ -435,7 +435,7 @@ export default {
           collectionId: collectionId,
           params: {
             limit: 3,
-            'geo-distance': this.coordNearestPoint[1] + ',' + this.coordNearestPoint[0] + ',' + this.nearestDistance,
+            'geo-distance': this.coordNearestPoint[1].toFixed(4) + ',' + this.coordNearestPoint[0].toFixed(4) + ',' + this.nearestDistance,
             sortby: 'geometry'
           }
         })
