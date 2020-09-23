@@ -313,7 +313,7 @@ export default {
     loadExtractRaster: async function() {
       this.rasterExtractResults.loading = true
       await this.fetchProcessResults({
-        processId: 'extract-raster',
+        processId: 'hrdps-extract',
         jsonRequest: {
           "inputs": [{
             "id": "model",
