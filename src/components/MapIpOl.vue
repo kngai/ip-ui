@@ -79,7 +79,7 @@
           </vl-layer-vector> -->
 
           <vl-layer-vector :z-index="3" v-for="(collection, collectionId) in pointData" :key="collectionId" :visible="collection.on">
-            <vl-source-vector :features.sync="collection.data.features"></vl-source-vector>
+            <vl-source-vector :features="collection.data.features"></vl-source-vector>
 
             <vl-style>
               <vl-style-stroke color="brown"></vl-style-stroke>
@@ -426,7 +426,8 @@ export default {
       if (toggleVal) {
         this.pointData[collectionId].loading = true
         await this.fetchCollectionItems({
-          collectionId: collectionId
+          collectionId: collectionId,
+          params: {}
         })
         this.pointData[collectionId].data = this.collectionItemsById(collectionId)
         this.pointData[collectionId].loading = false
