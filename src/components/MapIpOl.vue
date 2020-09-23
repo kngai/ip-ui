@@ -544,6 +544,7 @@ export default {
   width: 100%;
 }
 .cardContents {
+  height: 500px;
   overflow-y: scroll;
 }
 </style>
