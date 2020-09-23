@@ -1,6 +1,10 @@
 // import the api endpoints
 import { getCollection, getAllCollections, getConformance, getCollectionItems } from "@/api/oa.api";
 
+const PARAMS_DEFAULT = {
+  limit: 500,
+  f: 'json'
+}
 // initial state
 const state = () => ({
   collection: {},
@@ -81,9 +85,10 @@ const actions = {
       console.error(error)
     }
   },
-  async fetchCollectionItems({ commit }, { collectionId }) {
+  async fetchCollectionItems({ commit }, { collectionId, params }) {
     try {
-      const response = await getCollectionItems(collectionId, {limit: 500, f: 'json'})
+      let newParams = Object.assign(PARAMS_DEFAULT, params)
+      const response = await getCollectionItems(collectionId, newParams)
       commit('setCollectionItems', {
         collectionId: collectionId,
         json: response.data

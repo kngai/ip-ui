@@ -92,9 +92,7 @@
           <v-card-title>OL Map</v-card-title>
           <v-card-text>
             Zoom: {{ zoom }}<br>
-            Center: {{ center }}<br>
-            Rotation: {{ rotation }}<br>
-            Draw Features: {{ drawFeatures }}<br>
+            Center: <code>{{ center }}</code><br>
           </v-card-text>
         </v-card>
         <v-card class="mt-4">
@@ -111,6 +109,8 @@
               label="Draw Type"
               dense
             ></v-select>
+            Draw Extent: <code>{{ extentDrawFeature }}</code><br>
+            Draw Features: <code>{{ drawFeatures }}</code><br>
           </v-card-text>
         </v-card>
         <v-card class="mt-4">
@@ -164,6 +164,16 @@
             <v-btn text @click="loadConformance" color="primary">Fetch</v-btn>
           </v-card-actions>
         </v-card>
+        <v-card class="mt-4">
+          <v-card-title>Boxed Stations</v-card-title>
+          <v-card-text>
+            <v-select v-model="boxedCollectionId" :items="boxedCollectionIds" label="Collection"></v-select>
+            <code>{{ stationsBoxed.data }}</code>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn text @click="loadCollectionPointsBoxed($event, boxedCollectionId)" color="primary" :disabled="boxedCollectionIds.length === 0" :loading="stationsBoxed.loading">Fetch</v-btn>
+          </v-card-actions>
+        </v-card>
       </v-col>
       <v-col>
         <v-card>
@@ -198,6 +208,7 @@
 
 <script>
 import GeoJSON from 'ol/format/GeoJSON'
+import Polygon from 'ol/geom/Polygon'
 import 'vuelayers/dist/vuelayers.min.css' // needs css-loader
 import { mapState, mapGetters, mapActions } from 'vuex'
 
@@ -234,7 +245,15 @@ export default {
         loading: false,
         data: {}
       },
-      processId: 'hrdps-extract'
+      processId: 'hrdps-extract',
+      boxedCollectionId: 'dms-swob',
+      stationsBoxed: {
+        loading: false,
+        data: {
+          features: []
+        },
+        on: false
+      }
     }
   },
   computed: {
@@ -252,6 +271,20 @@ export default {
     ]),
     numClimateStations: function () {
       return this.geometPointData['climate-stations'].data.features.length
+    },
+    extentDrawFeature: function () {
+      if (this.drawFeatures.length === 0) {
+        return null
+      }
+      let drawPolygon = new Polygon(this.drawFeatures[0].geometry.coordinates)
+      return drawPolygon.getExtent()
+    },
+    boxedCollectionIds: function () {
+      let items = Object.keys(this.pointData)
+      if (items.length === 0) {
+        return ['dms-swob']
+      }
+      return Object.keys(this.pointData)
     }
   },
   methods: {
@@ -297,6 +330,19 @@ export default {
         })
         this.pointData[collectionId].data = this.collectionItemsById(collectionId)
         this.pointData[collectionId].loading = false
+      }
+    },
+    loadCollectionPointsBoxed: async function(collectionId) {
+      if (this.extentDrawFeature !== null) {
+        this.stationsBoxed.loading = true
+        await this.fetchCollectionItems({
+          collectionId: collectionId,
+          params: {
+            bbox: this.extentDrawFeature.toString()
+          }
+        })
+        this.stationsBoxed.data = this.collectionItemsById(collectionId)
+        this.stationsBoxed.loading = false
       }
     },
     loadGeometCollectionPoints: async function(toggleVal, collectionId) {
