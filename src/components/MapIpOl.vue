@@ -137,7 +137,7 @@
         </vl-map>
       </v-col>
       <v-col cols="6">
-        <v-card :loading="stationsNearestPoint.loading" class="cardContents">
+        <v-card :loading="stationsNearestPoint.loading" height="500" class="scrollY">
           <v-card-title>Nearest stations from point</v-card-title>
           <v-card-text>
             <v-switch
@@ -194,14 +194,15 @@
         </v-card>
       </v-col>
       <v-col>
-        <v-card>
+        <v-card class="scrollY" height="500">
           <v-card-title>Extract Raster</v-card-title>
           <v-card-text>
             <v-text-field v-model="processId" label="Process ID"></v-text-field>
+            Draw Features: <code>{{ drawFeatures }}</code><br><br>
             <code>{{ rasterExtractResults.data }}</code>
           </v-card-text>
           <v-card-actions>
-            <v-btn text @click="loadExtractRaster" :loading="rasterExtractResults.loading" color="primary">Fetch results</v-btn>
+            <v-btn text @click="loadExtractRaster" :loading="rasterExtractResults.loading" color="primary" :disabled="drawFeatures.length === 0">Fetch results</v-btn>
           </v-card-actions>
         </v-card>
         <v-card class="mt-4">
@@ -548,8 +549,7 @@ export default {
   height: 500px;
   width: 100%;
 }
-.cardContents {
-  height: 500px;
+.scrollY {
   overflow-y: scroll;
 }
 </style>
