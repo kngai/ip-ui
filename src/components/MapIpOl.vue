@@ -243,8 +243,8 @@ export default {
     },
     loadAllCollections: function () {
       if (this.collectionIds.length === 0) {
-        this.fetchAllCollections()
-        this.collectionIds.forEach((collectionId) => {
+        await this.fetchAllCollections()
+        await this.collectionIds.forEach((collectionId) => {
           this.pointData[collectionId] = {
             loading: false,
             data: {
