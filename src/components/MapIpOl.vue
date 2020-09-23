@@ -24,7 +24,7 @@
         </vl-style>
       </vl-layer-vector>
 
-      <!-- <vl-layer-vector :z-index="2" :visible="geometPointData['climate-stations'].on">
+      <vl-layer-vector :z-index="2" :visible="geometPointData['climate-stations'].on">
         <vl-source-vector :features="featuresClimateStations" ident="climate-stations"></vl-source-vector>
 
         <vl-style>
@@ -35,17 +35,17 @@
             <vl-style-stroke color="brown"></vl-style-stroke>
           </vl-style-circle>
         </vl-style>
-      </vl-layer-vector> -->
+      </vl-layer-vector>
 
-      <vl-layer-vector :z-index="3" :visible="pointData['dms-swob'].on">
-        <vl-source-vector :features="featuresSwobStations" ident="dms-swob-stations"></vl-source-vector>
+      <vl-layer-vector :z-index="2" v-for="collectionId in collectionIds" :key="collectionId" :visible="pointData[collectionId].on">
+        <vl-source-vector :features.sync="pointData[collectionId].data.features" ident="dms-swob-stations"></vl-source-vector>
 
         <vl-style>
-          <vl-style-stroke color="purple"></vl-style-stroke>
+          <vl-style-stroke color="brown"></vl-style-stroke>
           <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
           <vl-style-circle :radius="5">
-            <vl-style-fill color="purple"></vl-style-fill>
-            <vl-style-stroke color="orange"></vl-style-stroke>
+            <vl-style-fill color="orange"></vl-style-fill>
+            <vl-style-stroke color="brown"></vl-style-stroke>
           </vl-style-circle>
         </vl-style>
       </vl-layer-vector>
@@ -134,18 +134,18 @@
           <v-card-title>GeoJSON layers</v-card-title>
           <v-card-text>
             <v-switch
-              v-model="geometPointData['climate-stations'].on"
-              @change="loadGeometCollectionPoints($event, 'climate-stations')"
-              :loading="geometPointData['climate-stations'].loading"
-              label="MSC Climate stations">
-            </v-switch>
-            <v-switch
               v-for="collectionId in collectionIds"
               :key="collectionId"
               v-model="pointData[collectionId].on"
               @change="loadCollectionPoints($event, collectionId)"
               :loading="pointData[collectionId].loading"
               :label="collectionId">
+            </v-switch>
+            <v-switch
+              v-model="geometPointData['climate-stations'].on"
+              @change="loadGeometCollectionPoints($event, 'climate-stations')"
+              :loading="geometPointData['climate-stations'].loading"
+              label="climate-stations (GeoMet OPS)">
             </v-switch>
           </v-card-text>
         </v-card>
@@ -223,9 +223,6 @@ export default {
     },
     featuresClimateStations: function () {
       return this.geometPointData['climate-stations'].data.features || []
-    },
-    featuresSwobStations: function () {
-      return this.pointData['dms-swob'].data.features || []
     }
   },
   methods: {
