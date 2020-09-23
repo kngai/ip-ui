@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer">
-    <vl-map class="ipMap" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" data-projection="EPSG:4326" v-if="collectionIds.length > 0">
+    <vl-map class="ipMap" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" data-projection="EPSG:4326">
       <vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation"></vl-view>
 
       <vl-layer-tile id="osm">
@@ -38,7 +38,7 @@
       </vl-layer-vector>
 
       <vl-layer-vector :z-index="2" v-for="collectionId in collectionIds" :key="collectionId" :visible="pointData[collectionId].on">
-        <vl-source-vector :features.sync="pointData[collectionId].data.features" ident="dms-swob-stations"></vl-source-vector>
+        <vl-source-vector :features.sync="pointData[collectionId].data.features" :ident="'source-' + collectionId"></vl-source-vector>
 
         <vl-style>
           <vl-style-stroke color="brown"></vl-style-stroke>
@@ -263,6 +263,7 @@ export default {
             on: false
           }
         })
+        console.log(this.pointData)
       }
     },
     loadCollectionPoints: async function(toggleVal, collectionId) {
