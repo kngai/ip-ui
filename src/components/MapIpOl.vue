@@ -187,7 +187,6 @@ export default {
       pointData: {},
       geometPointData: {
         'climate-stations': {
-          collectionId: 'climate-stations',
           loading: false,
           data: {
             features: []
@@ -242,9 +241,9 @@ export default {
         await this.fetchConformance()
       }
     },
-    loadAllCollections: async function () {
+    loadAllCollections: function () {
       if (this.collectionIds.length === 0) {
-        await this.fetchAllCollections()
+        this.fetchAllCollections()
         this.collectionIds.forEach((collectionId) => {
           this.pointData[collectionId] = {
             loading: false,
