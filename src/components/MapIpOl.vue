@@ -148,6 +148,7 @@
             Lon: {{ coordNearestPoint[0].toFixed(4) }}<br>
             <v-text-field label="Distance" v-model="nearestDistance"></v-text-field>
             <v-text-field label="Limit" v-model="nearestLimit" type="number"></v-text-field>
+            <v-text-field label="Datetime" v-model="nearestDatetime"></v-text-field>
             <v-select v-model="boxedCollectionId" :items="boxedCollectionIds" label="Collection"></v-select>
             Feature IDs: <code>{{ stationsNearestPoint.data.features.map(feature => feature.id) }}</code>
           </v-card-text>
@@ -345,7 +346,8 @@ export default {
         on: false
       },
       nearestDistance: '100km',
-      nearestLimit: 3
+      nearestLimit: 3,
+      nearestDatetime: '2020-09-15T00:00:00Z'
     }
   },
   computed: {
@@ -456,7 +458,8 @@ export default {
           params: {
             limit: this.nearestLimit,
             'geo-distance': this.coordNearestPoint[1].toFixed(4) + ',' + this.coordNearestPoint[0].toFixed(4) + ',' + this.nearestDistance,
-            sortby: 'geometry'
+            sortby: 'geometry',
+            datetime: this.nearestDatetime
           }
         })
         this.stationsNearestPoint.data = this.collectionItemsById(collectionId)
