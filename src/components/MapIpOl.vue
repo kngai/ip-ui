@@ -293,11 +293,6 @@ export default {
       if (newVal) {
         this.stationsNearestPoint.on = false
       }
-    },
-    stationNearestPoint: function (newVal) {
-      if (newVal.on) {
-        this.drawOn = false
-      }
     }
   },
   data () {
