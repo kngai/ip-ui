@@ -128,6 +128,7 @@
         <v-card>
           <v-card-title>Extract Raster</v-card-title>
           <v-card-text>
+            <v-text-field v-model="processId" label="Process ID"></v-text-field>
             <code>{{ rasterExtractResults.data }}</code>
           </v-card-text>
           <v-card-actions>
@@ -232,7 +233,8 @@ export default {
       rasterExtractResults: {
         loading: false,
         data: {}
-      }
+      },
+      processId: 'hrdps-extract'
     }
   },
   computed: {
@@ -313,7 +315,7 @@ export default {
     loadExtractRaster: async function() {
       this.rasterExtractResults.loading = true
       await this.fetchProcessResults({
-        processId: 'hrdps-extract',
+        processId: this.processId,
         jsonRequest: {
           "inputs": [{
             "id": "model",
