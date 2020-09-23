@@ -76,6 +76,19 @@
         </vl-style>
       </vl-layer-vector>
 
+      <vl-layer-vector :z-index="4" :visible="stationsBoxed.on">
+        <vl-source-vector :features="stationsBoxed.data.features"></vl-source-vector>
+
+        <vl-style>
+          <vl-style-stroke color="brown"></vl-style-stroke>
+          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+          <vl-style-circle :radius="5">
+            <vl-style-fill color="purple"></vl-style-fill>
+            <vl-style-stroke color="orange"></vl-style-stroke>
+          </vl-style-circle>
+        </vl-style>
+      </vl-layer-vector>
+
       <vl-interaction-draw :type="drawType" source="draw-source" @drawstart="clearDrawFeatures" v-if="drawOn">
         <vl-style>
           <vl-style-stroke color="blue"></vl-style-stroke>
@@ -167,6 +180,10 @@
         <v-card class="mt-4">
           <v-card-title>Boxed Stations</v-card-title>
           <v-card-text>
+            <v-switch
+              v-model="stationsBoxed.on"
+              :label="`Layer: ${stationsBoxed.on}`">
+            </v-switch>
             <v-select v-model="boxedCollectionId" :items="boxedCollectionIds" label="Collection"></v-select>
             Feature IDs: <code>{{ stationsBoxed.data.features.map(feature => feature.id) }}</code>
           </v-card-text>
