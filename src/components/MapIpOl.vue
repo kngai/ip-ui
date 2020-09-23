@@ -241,10 +241,10 @@ export default {
         await this.fetchConformance()
       }
     },
-    loadAllCollections: function () {
+    loadAllCollections: async function () {
       if (this.collectionIds.length === 0) {
         await this.fetchAllCollections()
-        this.collectionIds.forEach((collectionId) => {
+        await this.collectionIds.forEach((collectionId) => {
           this.pointData[collectionId] = {
             loading: false,
             data: {
