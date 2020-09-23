@@ -127,10 +127,10 @@
         <v-card class="mt-4">
           <v-card-title>Extract Raster</v-card-title>
           <v-card-text>
-            <code>{{ rasterExtract }}</code>
+            <code>{{ rasterExtractResults.data }}</code>
           </v-card-text>
           <v-card-actions>
-            <v-btn text @click="loadExtractRaster" color="primary">Fetch results</v-btn>
+            <v-btn text @click="loadExtractRaster" :loading="rasterExtractResults.loading" color="primary">Fetch results</v-btn>
           </v-card-actions>
         </v-card>
         <v-card class="mt-4">
@@ -228,6 +228,10 @@ export default {
           },
           on: false
         }
+      },
+      rasterExtractResults: {
+        loading: false,
+        data: {}
       }
     }
   },
@@ -307,40 +311,46 @@ export default {
       await this.fetchProcesses()
     },
     loadExtractRaster: async function() {
-      await this.fetchProcessResults('extract-raster', {
-        "inputs": [{
-          "id": "model",
-          "value": "HRDPS"
-        }, {
-          "id": "forecast_hours_",
-          "value": "2020-09-16T02:00:00Z"
-        }, {
-          "id": "model_run",
-          "value": "2020-09-16T00:00:00Z"
-        }, {
-          "id": "input_geojson",
-          "value": {
-            "type": "FeatureCollection",
-            "crs": {
-              "type": "EPSG",
-              "properties": {
-                "code": 4326,
-                "coordinate_order": [1, 0]
-              }
-            },
-            "features": [{
-              "type": "Feature",
-              "id": "id0",
-              "geometry": {
-                "type": "Point",
-                "coordinates": [
-                  [-100.0, 45.0]
-                ]
-              }
-            }]
-          }
-        }]
+      this.rasterExtractResults.loading = true
+      await this.fetchProcessResults({
+        processId: 'extract-raster',
+        jsonRequest: {
+          "inputs": [{
+            "id": "model",
+            "value": "HRDPS"
+          }, {
+            "id": "forecast_hours_",
+            "value": "2020-09-16T02:00:00Z"
+          }, {
+            "id": "model_run",
+            "value": "2020-09-16T00:00:00Z"
+          }, {
+            "id": "input_geojson",
+            "value": {
+              "type": "FeatureCollection",
+              "crs": {
+                "type": "EPSG",
+                "properties": {
+                  "code": 4326,
+                  "coordinate_order": [1, 0]
+                }
+              },
+              "features": [{
+                "type": "Feature",
+                "id": "id0",
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    [-100.0, 45.0]
+                  ]
+                }
+              }]
+            }
+          }]
+        }
       })
+      this.rasterExtractResults.data = this.rasterExtract
+      this.rasterExtractResults.loading = false
     },
     // styleFactoryClimateStation: function() { // custom styling with text
     //   return feature => {
