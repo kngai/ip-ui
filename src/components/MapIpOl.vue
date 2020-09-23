@@ -24,6 +24,19 @@
         </vl-style>
       </vl-layer-vector>
 
+      <vl-layer-vector :z-index="1">
+        <vl-source-vector :features.sync="drawNearestPoint" ident="draw-nearest-point"></vl-source-vector>
+
+        <vl-style>
+          <vl-style-stroke color="green"></vl-style-stroke>
+          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+          <vl-style-circle :radius="5">
+            <vl-style-fill color="green"></vl-style-fill>
+            <vl-style-stroke color="dark-green"></vl-style-stroke>
+          </vl-style-circle>
+        </vl-style>
+      </vl-layer-vector>
+
       <vl-layer-vector :z-index="2" :visible="geometPointData['climate-stations'].on">
         <vl-source-vector :features="geometPointData['climate-stations'].data.features" ident="climate-stations"></vl-source-vector>
 
@@ -89,7 +102,27 @@
         </vl-style>
       </vl-layer-vector>
 
+      <vl-layer-vector :z-index="4" :visible="stationsNearestPoint.on">
+        <vl-source-vector :features="stationsNearestPoint.data.features"></vl-source-vector>
+
+        <vl-style>
+          <vl-style-stroke color="brown"></vl-style-stroke>
+          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+          <vl-style-circle :radius="5">
+            <vl-style-fill color="purple"></vl-style-fill>
+            <vl-style-stroke color="orange"></vl-style-stroke>
+          </vl-style-circle>
+        </vl-style>
+      </vl-layer-vector>
+
       <vl-interaction-draw :type="drawType" source="draw-source" @drawstart="clearDrawFeatures" v-if="drawOn">
+        <vl-style>
+          <vl-style-stroke color="blue"></vl-style-stroke>
+          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+        </vl-style>
+      </vl-interaction-draw>
+
+      <vl-interaction-draw type="Point" source="draw-nearest-point" @drawstart="clearDrawNearestPoint" @drawend="loadCollectionPointsNearest($event, boxedCollectionId)" v-if="stationsNearestPoint.on">
         <vl-style>
           <vl-style-stroke color="blue"></vl-style-stroke>
           <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
@@ -169,13 +202,18 @@
           </v-card-actions>
         </v-card>
         <v-card class="mt-4">
-          <v-card-title>OGC API - Conformance</v-card-title>
+          <v-card-title>Nearest stations from point</v-card-title>
           <v-card-text>
-            <code>{{ conformsTo }}</code>
+            <v-switch
+              v-model="stationsNearestPoint.on"
+              :label="'Draw nearest point'">
+            </v-switch>
+            Lat: {{ coordNearestPoint[1] }}<br>
+            Lon: {{ coordNearestPoint[0] }}<br>
+            <v-text-field label="Distance" v-model="nearestDistance"></v-text-field>
+            <v-select v-model="boxedCollectionId" :items="boxedCollectionIds" label="Collection"></v-select>
+            Feature IDs: <code>{{ stationsNearestPoint.data.features.map(feature => feature.id) }}</code>
           </v-card-text>
-          <v-card-actions>
-            <v-btn text @click="loadConformance" color="primary">Fetch</v-btn>
-          </v-card-actions>
         </v-card>
         <v-card class="mt-4">
           <v-card-title>Boxed Stations</v-card-title>
@@ -189,6 +227,15 @@
           </v-card-text>
           <v-card-actions>
             <v-btn text @click="loadCollectionPointsBoxed($event, boxedCollectionId)" color="primary" :disabled="extentDrawFeature === null" :loading="stationsBoxed.loading">Fetch</v-btn>
+          </v-card-actions>
+        </v-card>
+        <v-card class="mt-4">
+          <v-card-title>OGC API - Conformance</v-card-title>
+          <v-card-text>
+            <code>{{ conformsTo }}</code>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn text @click="loadConformance" color="primary">Fetch</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -240,6 +287,7 @@ export default {
       center: [-92, 48],
       rotation: 0,
       drawFeatures: [],
+      drawNearestPoint: [],
       drawOn: false,
       drawType: 'Polygon',
       drawTypes: ['Polygon', 'LineString', 'Point'],
@@ -269,8 +317,16 @@ export default {
         data: {
           features: []
         },
+        on: true
+      },
+      stationsNearestPoint: {
+        loading: false,
+        data: {
+          features: []
+        },
         on: false
-      }
+      },
+      nearestDistance: '10km'
     }
   },
   computed: {
@@ -301,6 +357,13 @@ export default {
         return ['dms-swob']
       }
       return this.collectionIds
+    },
+    coordNearestPoint: function () {
+      if (this.drawNearestPoint.length === 0 ) {
+        return [null, null]
+      } else {
+        return this.drawNearestPoint[0].geometry.coordinates
+      }
     }
   },
   methods: {
@@ -318,6 +381,9 @@ export default {
     }),
     clearDrawFeatures: function () {
       this.drawFeatures = []
+    },
+    clearDrawNearestPoint: function () {
+      this.drawNearestPoint = []
     },
     loadConformance: async function () {
       if (this.conformsTo.length === 0) {
@@ -360,6 +426,21 @@ export default {
         })
         this.stationsBoxed.data = this.collectionItemsById(collectionId)
         this.stationsBoxed.loading = false
+      }
+    },
+    loadCollectionPointsNearest: async function(evt, collectionId) {
+      if (this.drawNearestPoint.length !== 0) {
+        this.stationsNearestPoint.loading = true
+        await this.fetchCollectionItems({
+          collectionId: collectionId,
+          params: {
+            limit: 3,
+            'geo-distance': this.coordNearestPoint[1] + ',' + this.coordNearestPoint[0] + ',' + this.nearestDistance,
+            sortby: 'geometry'
+          }
+        })
+        this.stationsNearestPoint.data = this.collectionItemsById(collectionId)
+        this.stationsNearestPoint.loading = false
       }
     },
     loadGeometCollectionPoints: async function(toggleVal, collectionId) {
