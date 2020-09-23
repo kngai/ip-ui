@@ -151,8 +151,6 @@
       </v-col>
     </v-row>
 
-    <h2>Debugging</h2>
-
     <v-row>
       <v-col>
         <v-card>
