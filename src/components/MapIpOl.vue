@@ -133,7 +133,7 @@
         </vl-map>
       </v-col>
       <v-col cols="6">
-        <v-card class="mt-4" :loading="stationsNearestPoint.loading">
+        <v-card :loading="stationsNearestPoint.loading" class="cardContents">
           <v-card-title>Nearest stations from point</v-card-title>
           <v-card-text>
             <v-switch
@@ -542,5 +542,8 @@ export default {
 .ipMap {
   height: 500px;
   width: 100%;
+}
+.cardContents {
+  overflow-y: scroll;
 }
 </style>
