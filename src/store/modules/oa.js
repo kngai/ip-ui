@@ -71,6 +71,16 @@ const actions = {
       console.error(error)
     }
   },
+  async fetchAllCollections({ commit }) {
+    try {
+      const response = await getAllCollections()
+      commit('setAllCollections', {
+        json: response.data
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  },
   async fetchCollectionItems({ commit }, { collectionId }) {
     try {
       const response = await getCollectionItems(collectionId, {limit: 500})
@@ -86,16 +96,6 @@ const actions = {
           features: []
         }
       })
-    }
-  },
-  async fetchAllCollections({ commit }) {
-    try {
-      const response = await getAllCollections()
-      commit('setAllCollections', {
-        json: response.data
-      })
-    } catch (error) {
-      console.error(error)
     }
   },
   async fetchConformance({ commit }) {
