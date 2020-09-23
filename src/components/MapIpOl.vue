@@ -280,11 +280,10 @@ export default {
       return drawPolygon.getExtent()
     },
     boxedCollectionIds: function () {
-      let items = Object.keys(this.pointData)
-      if (items.length === 0) {
+      if (this.collectionIds.length === 0) {
         return ['dms-swob']
       }
-      return Object.keys(this.pointData)
+      return this.collectionIds
     }
   },
   methods: {
@@ -332,12 +331,13 @@ export default {
         this.pointData[collectionId].loading = false
       }
     },
-    loadCollectionPointsBoxed: async function(collectionId) {
+    loadCollectionPointsBoxed: async function(evt, collectionId) {
       if (this.extentDrawFeature !== null) {
         this.stationsBoxed.loading = true
         await this.fetchCollectionItems({
           collectionId: collectionId,
           params: {
+            limit: 5,
             bbox: this.extentDrawFeature.toString()
           }
         })
