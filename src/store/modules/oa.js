@@ -89,6 +89,10 @@ const actions = {
     try {
       let newParams = Object.assign(PARAMS_DEFAULT, params)
       const response = await getCollectionItems(collectionId, newParams)
+      // cleanup hack; OL geometry fix
+      response.data.features.forEach(feature => {
+        delete feature.properties.geometry
+      })
       commit('setCollectionItems', {
         collectionId: collectionId,
         json: response.data

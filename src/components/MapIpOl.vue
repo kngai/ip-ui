@@ -171,7 +171,7 @@
             Feature IDs: <code>{{ stationsBoxed.data.features.map(feature => feature.id) }}</code>
           </v-card-text>
           <v-card-actions>
-            <v-btn text @click="loadCollectionPointsBoxed($event, boxedCollectionId)" color="primary" :disabled="boxedCollectionIds.length === 0" :loading="stationsBoxed.loading">Fetch</v-btn>
+            <v-btn text @click="loadCollectionPointsBoxed($event, boxedCollectionId)" color="primary" :disabled="extentDrawFeature === null" :loading="stationsBoxed.loading">Fetch</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>

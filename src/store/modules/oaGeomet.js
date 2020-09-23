@@ -84,6 +84,10 @@ const actions = {
   async fetchCollectionItems({ commit }, { collectionId }) {
     try {
       const response = await getCollectionItems(collectionId)
+      // cleanup hack; OL geometry fix
+      response.data.features.forEach(feature => {
+        delete feature.properties.geometry
+      })
       commit('setCollectionItems', {
         collectionId: collectionId,
         json: response.data
