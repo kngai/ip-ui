@@ -25,7 +25,7 @@
       </vl-layer-vector>
 
       <vl-layer-vector :z-index="2" :visible="geometPointData['climate-stations'].on">
-        <vl-source-vector :features="featuresClimateStations" ident="climate-stations"></vl-source-vector>
+        <vl-source-vector :features="geometPointData['climate-stations'].data.features" ident="climate-stations"></vl-source-vector>
 
         <vl-style>
           <vl-style-stroke color="brown"></vl-style-stroke>
@@ -210,9 +210,6 @@ export default {
     ]),
     numClimateStations: function () {
       return this.geometPointData['climate-stations'].data.features.length
-    },
-    featuresClimateStations: function () {
-      return this.geometPointData['climate-stations'].data.features || []
     }
   },
   methods: {
