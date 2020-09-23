@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer">
-    <vl-map class="ipMap" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" data-projection="EPSG:4326">
+    <vl-map class="ipMap" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" data-projection="EPSG:4326" v-if="collectionIds.length > 0">
       <vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation"></vl-view>
 
       <vl-layer-tile id="osm">
