@@ -97,9 +97,7 @@
             Draw Features: {{ drawFeatures }}<br>
           </v-card-text>
         </v-card>
-      </v-col>
-      <v-col>
-        <v-card>
+        <v-card class="mt-4">
           <v-card-title>Draw Options</v-card-title>
           <v-card-text>
             <v-switch
@@ -116,15 +114,18 @@
           </v-card-text>
         </v-card>
         <v-card class="mt-4">
-          <v-card-title>OGC API - Processes</v-card-title>
+          <v-card-title>GeoMet WMS Layers</v-card-title>
           <v-card-text>
-            <code>{{ processes }}</code>
+            <v-switch
+              v-for="(layerOn, layerName) in geometWmsLayers" :key="layerName"
+              v-model="geometWmsLayers[layerName]"
+              :label="`${layerName}: ${layerOn}`">
+            </v-switch>
           </v-card-text>
-          <v-card-actions>
-            <v-btn text @click="loadProcesses" color="primary">Fetch</v-btn>
-          </v-card-actions>
         </v-card>
-        <v-card class="mt-4">
+      </v-col>
+      <v-col>
+        <v-card>
           <v-card-title>Extract Raster</v-card-title>
           <v-card-text>
             <code>{{ rasterExtractResults.data }}</code>
@@ -134,14 +135,13 @@
           </v-card-actions>
         </v-card>
         <v-card class="mt-4">
-          <v-card-title>GeoMet WMS Layers</v-card-title>
+          <v-card-title>OGC API - Processes</v-card-title>
           <v-card-text>
-            <v-switch
-              v-for="(layerOn, layerName) in geometWmsLayers" :key="layerName"
-              v-model="geometWmsLayers[layerName]"
-              :label="`${layerName}: ${layerOn}`">
-            </v-switch>
+            <code>{{ processes }}</code>
           </v-card-text>
+          <v-card-actions>
+            <v-btn text @click="loadProcesses" color="primary">Fetch</v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
       <v-col>
