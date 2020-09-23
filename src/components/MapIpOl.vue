@@ -37,6 +37,32 @@
         </vl-style>
       </vl-layer-vector>
 
+      <!-- <vl-layer-vector :z-index="2">
+        <vl-source-vector url="/dms-swob-sample.json"></vl-source-vector>
+
+        <vl-style>
+          <vl-style-stroke color="brown"></vl-style-stroke>
+          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+          <vl-style-circle :radius="5">
+            <vl-style-fill color="orange"></vl-style-fill>
+            <vl-style-stroke color="blue"></vl-style-stroke>
+          </vl-style-circle>
+        </vl-style>
+      </vl-layer-vector>
+
+      <vl-layer-vector :z-index="2">
+        <vl-source-vector url="/climate-station-sample.json"></vl-source-vector>
+
+        <vl-style>
+          <vl-style-stroke color="brown"></vl-style-stroke>
+          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+          <vl-style-circle :radius="5">
+            <vl-style-fill color="orange"></vl-style-fill>
+            <vl-style-stroke color="brown"></vl-style-stroke>
+          </vl-style-circle>
+        </vl-style>
+      </vl-layer-vector> -->
+
       <vl-layer-vector :z-index="3" v-for="(collection, collectionId) in pointData" :key="collectionId" :visible="collection.on">
         <vl-source-vector :features.sync="collection.data.features"></vl-source-vector>
 
@@ -96,6 +122,15 @@
           </v-card-text>
           <v-card-actions>
             <v-btn text @click="loadProcesses" color="primary">Fetch</v-btn>
+          </v-card-actions>
+        </v-card>
+        <v-card class="mt-4">
+          <v-card-title>Extract Raster</v-card-title>
+          <v-card-text>
+            <code>{{ rasterExtract }}</code>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn text @click="loadExtractRaster" color="primary">Fetch results</v-btn>
           </v-card-actions>
         </v-card>
         <v-card class="mt-4">
@@ -183,7 +218,7 @@ export default {
         'RADAR_1KM_RRAI': false,
         'RADAR_COVERAGE_RRAI.INV': false
       },
-      geoJSONClimate: new GeoJSON(),
+      geoJSONFormat: new GeoJSON(),
       pointData: {},
       geometPointData: {
         'climate-stations': {
@@ -206,7 +241,8 @@ export default {
       geometCollectionItemsById: 'collectionItemsById'
     }),
     ...mapState('oaproc', [
-      'processes'
+      'processes',
+      'rasterExtract'
     ]),
     numClimateStations: function () {
       return this.geometPointData['climate-stations'].data.features.length
@@ -227,11 +263,6 @@ export default {
     }),
     clearDrawFeatures: function () {
       this.drawFeatures = []
-    },
-    clearDrawPoint: function () {
-      if (this.drawPoint.length > 1) {
-        this.drawPoint.shift()
-      }
     },
     loadConformance: async function () {
       if (this.conformsTo.length === 0) {
@@ -275,7 +306,7 @@ export default {
     loadProcesses: async function() {
       await this.fetchProcesses()
     },
-    loadProcessResults: async function() {
+    loadExtractRaster: async function() {
       await this.fetchProcessResults('extract-raster', {
         "inputs": [{
           "id": "model",
