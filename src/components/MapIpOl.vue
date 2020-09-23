@@ -168,7 +168,7 @@
           <v-card-title>Boxed Stations</v-card-title>
           <v-card-text>
             <v-select v-model="boxedCollectionId" :items="boxedCollectionIds" label="Collection"></v-select>
-            <code>{{ stationsBoxed.data }}</code>
+            Feature IDs: <code>{{ stationsBoxed.data.features.map(feature => feature.id) }}</code>
           </v-card-text>
           <v-card-actions>
             <v-btn text @click="loadCollectionPointsBoxed($event, boxedCollectionId)" color="primary" :disabled="boxedCollectionIds.length === 0" :loading="stationsBoxed.loading">Fetch</v-btn>
