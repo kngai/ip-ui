@@ -37,8 +37,8 @@
         </vl-style>
       </vl-layer-vector>
 
-      <vl-layer-vector :z-index="2" v-for="collectionId in collectionIds" :key="collectionId" :visible="pointData[collectionId].on">
-        <vl-source-vector :features.sync="pointData[collectionId].data.features" :ident="'source-' + collectionId"></vl-source-vector>
+      <vl-layer-vector :z-index="2" v-for="(collection, collectionId) in pointData" :key="collectionId" :visible="collection.on">
+        <vl-source-vector :features.sync="collection.data.features" :ident="'source-' + collectionId"></vl-source-vector>
 
         <vl-style>
           <vl-style-stroke color="brown"></vl-style-stroke>
@@ -184,16 +184,7 @@ export default {
         'RADAR_COVERAGE_RRAI.INV': false
       },
       geoJSONClimate: new GeoJSON(),
-      pointData: {
-        'dms-swob': {
-          collectionId: 'dms-swob',
-          loading: false,
-          data: {
-            features: []
-          },
-          on: false
-        }
-      },
+      pointData: {},
       geometPointData: {
         'climate-stations': {
           collectionId: 'climate-stations',
