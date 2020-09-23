@@ -1,134 +1,155 @@
 <template>
-  <div id="mapContainer">
-    <vl-map class="ipMap" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" data-projection="EPSG:4326">
-      <vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation"></vl-view>
+  <div>
+    <v-row>
+      <v-col cols="6">
+        <vl-map class="ipMap" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" data-projection="EPSG:4326">
+          <vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation"></vl-view>
 
-      <vl-layer-tile id="osm">
-        <vl-source-osm></vl-source-osm>
-      </vl-layer-tile>
+          <vl-layer-tile id="osm">
+            <vl-source-osm></vl-source-osm>
+          </vl-layer-tile>
 
-      <vl-layer-image v-for="(layerOn, layerName) in geometWmsLayers" :key="layerName" :visible="layerOn">
-        <vl-source-image-wms url="https://geo.weather.gc.ca/geomet" format="image/png" :layers="layerName" transition="0"></vl-source-image-wms>
-      </vl-layer-image>
+          <vl-layer-image v-for="(layerOn, layerName) in geometWmsLayers" :key="layerName" :visible="layerOn">
+            <vl-source-image-wms url="https://geo.weather.gc.ca/geomet" format="image/png" :layers="layerName" transition="0"></vl-source-image-wms>
+          </vl-layer-image>
 
-      <vl-layer-vector :z-index="1">
-        <vl-source-vector :features.sync="drawFeatures" ident="draw-source"></vl-source-vector>
+          <vl-layer-vector :z-index="1">
+            <vl-source-vector :features.sync="drawFeatures" ident="draw-source"></vl-source-vector>
 
-        <vl-style>
-          <vl-style-stroke color="green"></vl-style-stroke>
-          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
-          <vl-style-circle :radius="5">
-            <vl-style-fill color="green"></vl-style-fill>
-            <vl-style-stroke color="dark-green"></vl-style-stroke>
-          </vl-style-circle>
-        </vl-style>
-      </vl-layer-vector>
+            <vl-style>
+              <vl-style-stroke color="green"></vl-style-stroke>
+              <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+              <vl-style-circle :radius="5">
+                <vl-style-fill color="green"></vl-style-fill>
+                <vl-style-stroke color="dark-green"></vl-style-stroke>
+              </vl-style-circle>
+            </vl-style>
+          </vl-layer-vector>
 
-      <vl-layer-vector :z-index="1">
-        <vl-source-vector :features.sync="drawNearestPoint" ident="draw-nearest-point"></vl-source-vector>
+          <vl-layer-vector :z-index="1">
+            <vl-source-vector :features.sync="drawNearestPoint" ident="draw-nearest-point"></vl-source-vector>
 
-        <vl-style>
-          <vl-style-stroke color="green"></vl-style-stroke>
-          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
-          <vl-style-circle :radius="5">
-            <vl-style-fill color="green"></vl-style-fill>
-            <vl-style-stroke color="dark-green"></vl-style-stroke>
-          </vl-style-circle>
-        </vl-style>
-      </vl-layer-vector>
+            <vl-style>
+              <vl-style-stroke color="green"></vl-style-stroke>
+              <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+              <vl-style-circle :radius="5">
+                <vl-style-fill color="green"></vl-style-fill>
+                <vl-style-stroke color="dark-green"></vl-style-stroke>
+              </vl-style-circle>
+            </vl-style>
+          </vl-layer-vector>
 
-      <vl-layer-vector :z-index="2" :visible="geometPointData['climate-stations'].on">
-        <vl-source-vector :features="geometPointData['climate-stations'].data.features" ident="climate-stations"></vl-source-vector>
+          <vl-layer-vector :z-index="2" :visible="geometPointData['climate-stations'].on">
+            <vl-source-vector :features="geometPointData['climate-stations'].data.features" ident="climate-stations"></vl-source-vector>
 
-        <vl-style>
-          <vl-style-stroke color="brown"></vl-style-stroke>
-          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
-          <vl-style-circle :radius="5">
-            <vl-style-fill color="orange"></vl-style-fill>
-            <vl-style-stroke color="brown"></vl-style-stroke>
-          </vl-style-circle>
-        </vl-style>
-      </vl-layer-vector>
+            <vl-style>
+              <vl-style-stroke color="brown"></vl-style-stroke>
+              <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+              <vl-style-circle :radius="5">
+                <vl-style-fill color="orange"></vl-style-fill>
+                <vl-style-stroke color="brown"></vl-style-stroke>
+              </vl-style-circle>
+            </vl-style>
+          </vl-layer-vector>
 
-      <!-- <vl-layer-vector :z-index="2">
-        <vl-source-vector url="/dms-swob-sample.json"></vl-source-vector>
+          <!-- <vl-layer-vector :z-index="2">
+            <vl-source-vector url="/dms-swob-sample.json"></vl-source-vector>
 
-        <vl-style>
-          <vl-style-stroke color="brown"></vl-style-stroke>
-          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
-          <vl-style-circle :radius="5">
-            <vl-style-fill color="orange"></vl-style-fill>
-            <vl-style-stroke color="blue"></vl-style-stroke>
-          </vl-style-circle>
-        </vl-style>
-      </vl-layer-vector>
+            <vl-style>
+              <vl-style-stroke color="brown"></vl-style-stroke>
+              <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+              <vl-style-circle :radius="5">
+                <vl-style-fill color="orange"></vl-style-fill>
+                <vl-style-stroke color="blue"></vl-style-stroke>
+              </vl-style-circle>
+            </vl-style>
+          </vl-layer-vector>
 
-      <vl-layer-vector :z-index="2">
-        <vl-source-vector url="/climate-station-sample.json"></vl-source-vector>
+          <vl-layer-vector :z-index="2">
+            <vl-source-vector url="/climate-station-sample.json"></vl-source-vector>
 
-        <vl-style>
-          <vl-style-stroke color="brown"></vl-style-stroke>
-          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
-          <vl-style-circle :radius="5">
-            <vl-style-fill color="orange"></vl-style-fill>
-            <vl-style-stroke color="brown"></vl-style-stroke>
-          </vl-style-circle>
-        </vl-style>
-      </vl-layer-vector> -->
+            <vl-style>
+              <vl-style-stroke color="brown"></vl-style-stroke>
+              <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+              <vl-style-circle :radius="5">
+                <vl-style-fill color="orange"></vl-style-fill>
+                <vl-style-stroke color="brown"></vl-style-stroke>
+              </vl-style-circle>
+            </vl-style>
+          </vl-layer-vector> -->
 
-      <vl-layer-vector :z-index="3" v-for="(collection, collectionId) in pointData" :key="collectionId" :visible="collection.on">
-        <vl-source-vector :features.sync="collection.data.features"></vl-source-vector>
+          <vl-layer-vector :z-index="3" v-for="(collection, collectionId) in pointData" :key="collectionId" :visible="collection.on">
+            <vl-source-vector :features.sync="collection.data.features"></vl-source-vector>
 
-        <vl-style>
-          <vl-style-stroke color="brown"></vl-style-stroke>
-          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
-          <vl-style-circle :radius="5">
-            <vl-style-fill color="orange"></vl-style-fill>
-            <vl-style-stroke color="brown"></vl-style-stroke>
-          </vl-style-circle>
-        </vl-style>
-      </vl-layer-vector>
+            <vl-style>
+              <vl-style-stroke color="brown"></vl-style-stroke>
+              <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+              <vl-style-circle :radius="5">
+                <vl-style-fill color="orange"></vl-style-fill>
+                <vl-style-stroke color="brown"></vl-style-stroke>
+              </vl-style-circle>
+            </vl-style>
+          </vl-layer-vector>
 
-      <vl-layer-vector :z-index="4" :visible="stationsBoxed.on">
-        <vl-source-vector :features="stationsBoxed.data.features"></vl-source-vector>
+          <vl-layer-vector :z-index="4" :visible="stationsBoxed.on">
+            <vl-source-vector :features="stationsBoxed.data.features"></vl-source-vector>
 
-        <vl-style>
-          <vl-style-stroke color="brown"></vl-style-stroke>
-          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
-          <vl-style-circle :radius="5">
-            <vl-style-fill color="purple"></vl-style-fill>
-            <vl-style-stroke color="orange"></vl-style-stroke>
-          </vl-style-circle>
-        </vl-style>
-      </vl-layer-vector>
+            <vl-style>
+              <vl-style-stroke color="brown"></vl-style-stroke>
+              <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+              <vl-style-circle :radius="5">
+                <vl-style-fill color="purple"></vl-style-fill>
+                <vl-style-stroke color="orange"></vl-style-stroke>
+              </vl-style-circle>
+            </vl-style>
+          </vl-layer-vector>
 
-      <vl-layer-vector :z-index="4" :visible="stationsNearestPoint.on">
-        <vl-source-vector :features="stationsNearestPoint.data.features"></vl-source-vector>
+          <vl-layer-vector :z-index="4" :visible="stationsNearestPoint.on">
+            <vl-source-vector :features="stationsNearestPoint.data.features"></vl-source-vector>
 
-        <vl-style>
-          <vl-style-stroke color="brown"></vl-style-stroke>
-          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
-          <vl-style-circle :radius="5">
-            <vl-style-fill color="purple"></vl-style-fill>
-            <vl-style-stroke color="orange"></vl-style-stroke>
-          </vl-style-circle>
-        </vl-style>
-      </vl-layer-vector>
+            <vl-style>
+              <vl-style-stroke color="brown"></vl-style-stroke>
+              <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+              <vl-style-circle :radius="5">
+                <vl-style-fill color="purple"></vl-style-fill>
+                <vl-style-stroke color="orange"></vl-style-stroke>
+              </vl-style-circle>
+            </vl-style>
+          </vl-layer-vector>
 
-      <vl-interaction-draw :type="drawType" source="draw-source" @drawstart="clearDrawFeatures" v-if="drawOn">
-        <vl-style>
-          <vl-style-stroke color="blue"></vl-style-stroke>
-          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
-        </vl-style>
-      </vl-interaction-draw>
+          <vl-interaction-draw :type="drawType" source="draw-source" @drawstart="clearDrawFeatures" v-if="drawOn">
+            <vl-style>
+              <vl-style-stroke color="blue"></vl-style-stroke>
+              <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+            </vl-style>
+          </vl-interaction-draw>
 
-      <vl-interaction-draw type="Point" source="draw-nearest-point" @drawstart="clearDrawNearestPoint" @drawend="loadCollectionPointsNearest($event, boxedCollectionId)" v-if="stationsNearestPoint.on">
-        <vl-style>
-          <vl-style-stroke color="blue"></vl-style-stroke>
-          <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
-        </vl-style>
-      </vl-interaction-draw>
-    </vl-map>
+          <vl-interaction-draw type="Point" source="draw-nearest-point" @drawstart="clearDrawNearestPoint" @drawend="loadCollectionPointsNearest($event, boxedCollectionId)" v-if="stationsNearestPoint.on">
+            <vl-style>
+              <vl-style-stroke color="blue"></vl-style-stroke>
+              <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+            </vl-style>
+          </vl-interaction-draw>
+        </vl-map>
+      </v-col>
+      <v-col cols="6">
+        <v-card class="mt-4" :loading="stationsNearestPoint.loading">
+          <v-card-title>Nearest stations from point</v-card-title>
+          <v-card-text>
+            <v-switch
+              v-model="stationsNearestPoint.on"
+              :label="'Draw nearest point'">
+            </v-switch>
+            Lat: {{ coordNearestPoint[1].toFixed(4) }}<br>
+            Lon: {{ coordNearestPoint[0].toFixed(4) }}<br>
+            <v-text-field label="Distance" v-model="nearestDistance"></v-text-field>
+            <v-text-field label="Limit" v-model="nearestLimit" type="number"></v-text-field>
+            <v-select v-model="boxedCollectionId" :items="boxedCollectionIds" label="Collection"></v-select>
+            Feature IDs: <code>{{ stationsNearestPoint.data.features.map(feature => feature.id) }}</code>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
 
     <h2>Debugging</h2>
 
@@ -201,20 +222,6 @@
             <v-btn text @click="loadAllCollections" color="primary">Fetch</v-btn>
           </v-card-actions>
         </v-card>
-        <v-card class="mt-4" :loading="stationsNearestPoint.loading">
-          <v-card-title>Nearest stations from point</v-card-title>
-          <v-card-text>
-            <v-switch
-              v-model="stationsNearestPoint.on"
-              :label="'Draw nearest point'">
-            </v-switch>
-            Lat: {{ coordNearestPoint[1].toFixed(4) }}<br>
-            Lon: {{ coordNearestPoint[0].toFixed(4) }}<br>
-            <v-text-field label="Distance" v-model="nearestDistance"></v-text-field>
-            <v-select v-model="boxedCollectionId" :items="boxedCollectionIds" label="Collection"></v-select>
-            Feature IDs: <code>{{ stationsNearestPoint.data.features.map(feature => feature.id) }}</code>
-          </v-card-text>
-        </v-card>
         <v-card class="mt-4">
           <v-card-title>Boxed Stations</v-card-title>
           <v-card-text>
@@ -281,10 +288,22 @@ export default {
   async mounted () {
     await this.loadAllCollections()
   },
+  watch: {
+    drawOn: function (newVal) {
+      if (newVal) {
+        this.stationsNearestPoint.on = false
+      }
+    },
+    stationNearestPoint: function (newVal) {
+      if (newVal.on) {
+        this.drawOn = false
+      }
+    }
+  },
   data () {
     return {
-      zoom: 5,
-      center: [-92, 48],
+      zoom: 4,
+      center: [-92, 55],
       rotation: 0,
       drawFeatures: [],
       drawNearestPoint: [],
@@ -326,7 +345,8 @@ export default {
         },
         on: false
       },
-      nearestDistance: '100km'
+      nearestDistance: '100km',
+      nearestLimit: 3
     }
   },
   computed: {
@@ -434,7 +454,7 @@ export default {
         await this.fetchCollectionItems({
           collectionId: collectionId,
           params: {
-            limit: 3,
+            limit: this.nearestLimit,
             'geo-distance': this.coordNearestPoint[1].toFixed(4) + ',' + this.coordNearestPoint[0].toFixed(4) + ',' + this.nearestDistance,
             sortby: 'geometry'
           }
@@ -525,7 +545,7 @@ export default {
 </script>
 
 <style scoped>
-#mapContainer {
+.ipMap {
   height: 500px;
   width: 100%;
 }
