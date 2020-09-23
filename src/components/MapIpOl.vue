@@ -128,6 +128,10 @@
             <vl-style>
               <vl-style-stroke color="blue"></vl-style-stroke>
               <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
+              <vl-style-circle :radius="5">
+                <vl-style-fill color="yellow"></vl-style-fill>
+                <vl-style-stroke color="orange"></vl-style-stroke>
+              </vl-style-circle>
             </vl-style>
           </vl-interaction-draw>
         </vl-map>
