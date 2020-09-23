@@ -228,6 +228,7 @@
               :label="`Layer: ${stationsBoxed.on}`">
             </v-switch>
             <v-select v-model="boxedCollectionId" :items="boxedCollectionIds" label="Collection"></v-select>
+            Draw polygon extent: <code>{{ extentDrawFeature }}</code><br>
             Feature IDs: <code>{{ stationsBoxed.data.features.map(feature => feature.id) }}</code>
           </v-card-text>
           <v-card-actions>
