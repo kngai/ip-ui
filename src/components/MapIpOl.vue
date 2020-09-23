@@ -335,16 +335,17 @@ export default {
                   "coordinate_order": [1, 0]
                 }
               },
-              "features": [{
-                "type": "Feature",
-                "id": "id0",
-                "geometry": {
-                  "type": "Point",
-                  "coordinates": [
-                    [-100.0, 45.0]
-                  ]
-                }
-              }]
+              "features": this.drawFeatures,
+              // "features": [{
+              //   "type": "Feature",
+              //   "id": "id0",
+              //   "geometry": {
+              //     "type": "Point",
+              //     "coordinates": [
+              //       [-100.0, 45.0]
+              //     ]
+              //   }
+              // }]
             }
           }]
         }
