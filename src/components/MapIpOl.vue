@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col cols="6">
-        <vl-map class="ipMap" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" data-projection="EPSG:4326">
+        <vl-map class="ipMap" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" data-projection="EPSG:4326" @mounted="onMapMounted">
           <vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation"></vl-view>
 
           <vl-layer-tile id="osm">
@@ -117,14 +117,14 @@
             </vl-style>
           </vl-layer-vector>
 
-          <vl-interaction-draw :type="drawType" source="draw-source" @drawstart="clearDrawFeatures" v-if="drawOn">
+          <vl-interaction-draw :type="drawType" source="draw-source" @drawend="keepOneDrawFeatures" :active="drawOn">
             <vl-style>
               <vl-style-stroke color="blue"></vl-style-stroke>
               <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
             </vl-style>
           </vl-interaction-draw>
 
-          <vl-interaction-draw type="Point" source="draw-nearest-point" @drawstart="clearDrawNearestPoint" @drawend="loadCollectionPointsNearest($event, boxedCollectionId)" v-if="stationsNearestPoint.on">
+          <vl-interaction-draw type="Point" source="draw-nearest-point" @drawend="onDrawEndNearestPoint($event, boxedCollectionId)" :active="stationsNearestPoint.on">
             <vl-style>
               <vl-style-stroke color="blue"></vl-style-stroke>
               <vl-style-fill color="rgba(255,255,255,0.5)"></vl-style-fill>
@@ -142,6 +142,7 @@
           <v-card-text>
             <v-switch
               v-model="stationsNearestPoint.on"
+              @change="toggleStationNearestPoint"
               :label="'Draw nearest point'">
             </v-switch>
             Lat: {{ coordNearestPoint[1].toFixed(4) }}<br>
@@ -159,14 +160,14 @@
     <v-row>
       <v-col>
         <v-card>
-          <v-card-title>OL Map</v-card-title>
+          <v-card-title>Map</v-card-title>
           <v-card-text>
             Zoom: {{ zoom }}<br>
             Center: <code>{{ center }}</code><br>
           </v-card-text>
         </v-card>
         <v-card class="mt-4">
-          <v-card-title>Draw Options</v-card-title>
+          <v-card-title>Draw options</v-card-title>
           <v-card-text>
             <v-switch
               v-model="drawOn"
@@ -184,7 +185,7 @@
           </v-card-text>
         </v-card>
         <v-card class="mt-4">
-          <v-card-title>GeoMet WMS Layers</v-card-title>
+          <v-card-title>GeoMet WMS layers</v-card-title>
           <v-card-text>
             <v-switch
               v-for="(layerOn, layerName) in geometWmsLayers" :key="layerName"
@@ -196,7 +197,7 @@
       </v-col>
       <v-col>
         <v-card class="scrollY" height="500">
-          <v-card-title>Extract Raster</v-card-title>
+          <v-card-title>Extract raster</v-card-title>
           <v-card-text>
             <v-text-field v-model="processId" label="Process ID"></v-text-field>
             Draw Features: <code>{{ drawFeatures }}</code><br><br>
@@ -207,7 +208,7 @@
           </v-card-actions>
         </v-card>
         <v-card class="mt-4">
-          <v-card-title>OGC API - Processes</v-card-title>
+          <v-card-title>OGC API Processes</v-card-title>
           <v-card-text>
             <code>{{ processes }}</code>
           </v-card-text>
@@ -227,14 +228,15 @@
           </v-card-actions>
         </v-card>
         <v-card class="mt-4">
-          <v-card-title>Boxed Stations</v-card-title>
+          <v-card-title>Stations in boxed extent</v-card-title>
           <v-card-text>
             <v-switch
-              v-model="stationsBoxed.on"
-              :label="`Layer: ${stationsBoxed.on}`">
+              v-model="extentInteractionOn"
+              @change="toggleExtentInteraction"
+              label="Draw extent (shift + drag)">
             </v-switch>
             <v-select v-model="boxedCollectionId" :items="boxedCollectionIds" label="Collection"></v-select>
-            Draw polygon extent: <code>{{ extentDrawFeature }}</code><br>
+            Draw extent: <code>{{ extentInteractionBbox }}</code><br>
             Feature IDs: <code>{{ stationsBoxed.data.features.map(feature => feature.id) }}</code>
           </v-card-text>
           <v-card-actions>
@@ -283,8 +285,9 @@
 </template>
 
 <script>
-import GeoJSON from 'ol/format/GeoJSON'
-import Polygon from 'ol/geom/Polygon'
+// import Polygon from 'ol/geom/Polygon'
+import ExtentInteraction from 'ol/interaction/Extent'
+import { shiftKeyOnly } from 'ol/events/condition';
 import 'vuelayers/dist/vuelayers.min.css' // needs css-loader
 import { mapState, mapGetters, mapActions } from 'vuex'
 
@@ -308,13 +311,15 @@ export default {
       drawFeatures: [],
       drawNearestPoint: [],
       drawOn: false,
-      drawType: 'Polygon',
+      drawType: 'Point',
       drawTypes: ['Polygon', 'LineString', 'Point'],
       geometWmsLayers: {
         'RADAR_1KM_RRAI': false,
         'RADAR_COVERAGE_RRAI.INV': false
       },
-      geoJSONFormat: new GeoJSON(),
+      extentInteraction: new ExtentInteraction({condition: shiftKeyOnly}),
+      extentInteractionOn: false,
+      extentInteractionBbox: [],
       pointData: {},
       geometPointData: {
         'climate-stations': {
@@ -370,8 +375,9 @@ export default {
       if (this.drawFeatures.length === 0) {
         return null
       }
-      let drawPolygon = new Polygon(this.drawFeatures[0].geometry.coordinates)
-      return drawPolygon.getExtent()
+      // let drawPolygon = new Polygon(this.drawFeatures[0].geometry.coordinates)
+      // return drawPolygon.getExtent()
+      return [1, 2, 3, 4]
     },
     boxedCollectionIds: function () {
       if (this.collectionIds.length === 0) {
@@ -400,18 +406,41 @@ export default {
     ...mapActions('oaGeomet', {
       fetchGeometCollectionItems: 'fetchCollectionItems'
     }),
-    clearDrawFeatures: function () {
-      this.drawFeatures = []
+    onMapMounted: function(vueMap) {
+      this.extentInteraction.setActive(this.extentInteractionOn)
+      this.extentInteraction.on('extentchanged', () => {
+        this.extentInteractionBbox = this.extentInteraction.getExtent()
+      })
+      vueMap.$map.addInteraction(this.extentInteraction)
     },
-    clearDrawNearestPoint: function () {
-      this.drawNearestPoint = []
+    keepOneDrawFeatures: function() {
+      if (this.drawFeatures.length > 1) {
+        this.drawFeatures.shift()
+      }
     },
-    loadConformance: async function () {
+    keepOneDrawNearestPoint: function() {
+      if (this.drawNearestPoint.length > 1) {
+        this.drawNearestPoint.shift()
+      }
+    },
+    onDrawEndNearestPoint: function (evt, collectionId) {
+      this.keepOneDrawNearestPoint()
+      this.loadCollectionPointsNearest(evt, collectionId)
+    },
+    toggleExtentInteraction: function () {
+      this.extentInteraction.setActive(this.extentInteractionOn)
+      this.extentInteraction.setExtent(null)
+    },
+    toggleStationNearestPoint: function () {
+      this.stationsNearestPoint.data.features = []
+      this.keepOneDrawNearestPoint()
+    },
+    loadConformance: async function() {
       if (this.conformsTo.length === 0) {
         await this.fetchConformance()
       }
     },
-    loadAllCollections: async function () {
+    loadAllCollections: async function() {
       if (this.collectionIds.length === 0) {
         await this.fetchAllCollections()
         this.collectionIds.forEach((collectionId) => {
