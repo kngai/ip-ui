@@ -201,6 +201,7 @@
           <v-card-title>Extract raster</v-card-title>
           <v-card-text>
             <v-text-field v-model="processId" label="Process ID"></v-text-field>
+            <v-text-field v-for="(val, key) in extractRaster" :key="key" v-model="extractRaster[key]" :label="key"></v-text-field>
             Draw Features: <code>{{ drawFeatures }}</code><br><br>
             <code>{{ rasterExtractResults.data }}</code>
           </v-card-text>
@@ -353,7 +354,12 @@ export default {
       },
       nearestDistance: '500km',
       nearestLimit: 3,
-      nearestDatetime: '2020-09-15T00:00:00Z'
+      nearestDatetime: '2020-09-15T00:00:00Z',
+      extractRaster: {
+        modelRun: '2020-09-16T00:00:00Z',
+        forecastHours: '2020-09-16T02:00:00Z',
+        model: 'HRDPS'
+      }
     }
   },
   computed: {
@@ -518,7 +524,6 @@ export default {
       this.drawFeatures.forEach((feature) => {
         // reduce coordinates to 4 decimals
         if (feature.geometry.type === 'Point') {
-          console.log(feature)
           let coords = feature.geometry.coordinates
           feature.geometry.coordinates = coords.map(xy => xy.toFixed(4))
         }
@@ -531,13 +536,13 @@ export default {
         jsonRequest: {
           "inputs": [{
             "id": "model",
-            "value": "HRDPS"
+            "value": this.extractRaster.model
           }, {
             "id": "forecast_hours_",
-            "value": "2020-09-16T02:00:00Z"
+            "value": this.extractRaster.forecastHours
           }, {
             "id": "model_run",
-            "value": "2020-09-16T00:00:00Z"
+            "value": this.extractRaster.modelRun
           }, {
             "id": "input_geojson",
             "value": {
