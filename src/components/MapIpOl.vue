@@ -163,7 +163,7 @@
           <v-card-title>Map</v-card-title>
           <v-card-text>
             Zoom: {{ zoom }}<br>
-            Center: <code>{{ center }}</code><br>
+            Center: <code>{{ center.map(val => val.toFixed(4)) }}</code><br>
           </v-card-text>
         </v-card>
         <v-card class="mt-4">
