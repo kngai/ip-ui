@@ -515,9 +515,9 @@ export default {
     },
     loadExtractRaster: async function() {
       this.rasterExtractResults.loading = true
-      this.drawFeatures.forEach((feature) => {
-        delete feature.properties
-      })
+      // this.drawFeatures.forEach((feature) => {
+      //   delete feature.properties
+      // })
       await this.fetchProcessResults({
         processId: this.processId,
         jsonRequest: {
