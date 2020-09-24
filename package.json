@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "axios": "^0.20.0",
+    "chart.js": "^2.9.3",
     "core-js": "^3.6.5",
     "ol": "^6.4.3",
     "vue": "^2.6.11",
+    "vue-chart": "^2.0.0",
     "vue-i18n": "^8.17.3",
     "vue-router": "^3.2.0",
     "vuelayers": "^0.12.0-rc.3",
