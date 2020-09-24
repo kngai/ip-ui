@@ -525,7 +525,7 @@ export default {
         // reduce coordinates to 4 decimals
         if (feature.geometry.type === 'Point') {
           let coords = feature.geometry.coordinates
-          feature.geometry.coordinates = coords.map(xy => xy.toFixed(4))
+          feature.geometry.coordinates = [coords.map(xy => xy.toFixed(4))] // array wrap
         }
 
         // extras
