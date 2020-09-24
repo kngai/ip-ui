@@ -171,6 +171,7 @@
           <v-card-text>
             <v-switch
               v-model="drawOn"
+              @change="toggleDrawFeature"
               :label="`Draw on: ${drawOn}`">
             </v-switch>
             <v-select
@@ -204,7 +205,7 @@
             <code>{{ rasterExtractResults.data }}</code>
           </v-card-text>
           <v-card-actions>
-            <v-btn text @click="loadExtractRaster" :loading="rasterExtractResults.loading" color="primary" :disabled="drawFeatures.length === 0">Fetch results</v-btn>
+            <v-btn text @click="loadExtractRaster" :loading="rasterExtractResults.loading" color="primary">Fetch results</v-btn>
           </v-card-actions>
         </v-card>
         <v-card class="mt-4">
@@ -285,7 +286,7 @@
 </template>
 
 <script>
-// import Polygon from 'ol/geom/Polygon'
+import Polygon from 'ol/geom/Polygon'
 import ExtentInteraction from 'ol/interaction/Extent'
 import { shiftKeyOnly } from 'ol/events/condition';
 import 'vuelayers/dist/vuelayers.min.css' // needs css-loader
@@ -350,7 +351,7 @@ export default {
         },
         on: false
       },
-      nearestDistance: '100km',
+      nearestDistance: '500km',
       nearestLimit: 3,
       nearestDatetime: '2020-09-15T00:00:00Z'
     }
@@ -374,10 +375,11 @@ export default {
     extentDrawFeature: function () {
       if (this.drawFeatures.length === 0) {
         return null
+      } else {
+        let drawPolygon = new Polygon(this.drawFeatures[0].geometry.coordinates, 'XY')
+        return drawPolygon.getExtent()
+        // return null
       }
-      // let drawPolygon = new Polygon(this.drawFeatures[0].geometry.coordinates)
-      // return drawPolygon.getExtent()
-      return [1, 2, 3, 4]
     },
     boxedCollectionIds: function () {
       if (this.collectionIds.length === 0) {
@@ -433,7 +435,10 @@ export default {
     },
     toggleStationNearestPoint: function () {
       this.stationsNearestPoint.data.features = []
-      this.keepOneDrawNearestPoint()
+      this.drawNearestPoint = []
+    },
+    toggleDrawFeature: function () {
+      this.drawFeatures = []
     },
     loadConformance: async function() {
       if (this.conformsTo.length === 0) {
@@ -510,6 +515,9 @@ export default {
     },
     loadExtractRaster: async function() {
       this.rasterExtractResults.loading = true
+      this.drawFeatures.forEach((feature) => {
+        delete feature.properties
+      })
       await this.fetchProcessResults({
         processId: this.processId,
         jsonRequest: {
@@ -533,7 +541,7 @@ export default {
                   "coordinate_order": [1, 0]
                 }
               },
-              "features": this.drawFeatures,
+              "features": this.drawFeatures
               // "features": [{
               //   "type": "Feature",
               //   "id": "id0",
@@ -550,7 +558,7 @@ export default {
       })
       this.rasterExtractResults.data = this.rasterExtract
       this.rasterExtractResults.loading = false
-    },
+    }
     // styleFactoryClimateStation: function() { // custom styling with text
     //   return feature => {
     //     return [new olStyle({
