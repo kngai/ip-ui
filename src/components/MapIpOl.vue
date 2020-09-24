@@ -515,9 +515,17 @@ export default {
     },
     loadExtractRaster: async function() {
       this.rasterExtractResults.loading = true
-      // this.drawFeatures.forEach((feature) => {
-      //   delete feature.properties
-      // })
+      this.drawFeatures.forEach((feature) => {
+        // reduce coordinates to 4 decimals
+        if (feature.geometry.type === 'Point') {
+          console.log(feature)
+          let coords = feature.geometry.coordinates
+          feature.geometry.coordinates = coords.map(xy => xy.toFixed(4))
+        }
+
+        // extras
+        delete feature.properties
+      })
       await this.fetchProcessResults({
         processId: this.processId,
         jsonRequest: {
